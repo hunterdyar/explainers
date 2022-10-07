@@ -24,6 +24,12 @@
 article{
     width: 600px;
 }
+#renderCanvas {
+    touch-action: none;
+}
+iframe{
+    width: 100%;
+}
 iframe{
     width: 600px;
     height: 400px;
