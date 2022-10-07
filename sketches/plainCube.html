@@ -11,6 +11,7 @@
 <script>
   let camera, scene, renderer;
   let mesh;
+  let ambientLight, light;
 
   init();
   animate();
@@ -22,11 +23,18 @@
 
     scene = new THREE.Scene();
 
-    const geometry = new THREE.BoxGeometry( 200, 200, 200 );
-    const material = new THREE.MeshBasicMaterial( { color: "#00ff00" } );
-
-    mesh = new THREE.Mesh( geometry, material );
+    //Add  Cube
+    const cubeGeo = new THREE.BoxGeometry( 200, 200, 200 );
+    const material = new THREE.MeshPhongMaterial( { specular: 0x000000, flatShading: true, side: THREE.DoubleSide,color:"#2F2" } );
+    mesh = new THREE.Mesh( cubeGeo, material );
     scene.add( mesh );
+    //lights
+    ambientLight = new THREE.AmbientLight( 0x686868 );
+    light = new THREE.DirectionalLight( 0xCCCCCC, 1.0 );
+    light.position.set( 0.32, 0.39, 0.7 );
+
+    scene.add( ambientLight );
+    scene.add( light )
 
     renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
     renderer.setPixelRatio( window.devicePixelRatio );

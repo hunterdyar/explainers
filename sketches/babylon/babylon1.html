@@ -34,13 +34,11 @@
   const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 
   const createScene = function () {
-    console.log("create scene");
 
     // This creates a basic Babylon Scene object (non-mesh)
     const scene = new BABYLON.Scene(engine);
 
     var crateTex = new BABYLON.Texture("../textures/crate1_diffuse.png",scene);
-    console.log(crateTex);
     // This creates and positions a free camera (non-mesh)
     const camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
     // This targets the camera to scene origin
@@ -108,7 +106,7 @@
         if(pointGUI){
           pointGUI.left =  uv.x * 200 - 100;
           pointGUI.top = -uv.y * 200 + 100;
-          console.log(pointGUI);
+
         }else{
           console.log("WHY NULL!?!?");
         }
