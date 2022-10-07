@@ -1,6 +1,13 @@
+Zfont.init(Zdog);
+
+let font = new Zdog.Font({
+    src: "../img/fredokaone.ttf"
+})
+
 let length = 4.25;
 let offset = 1.25;
 let TAU = Zdog.TAU;
+
 function Create3DAxis(canvasElement)
 {
     let spinning = true;
@@ -8,7 +15,8 @@ function Create3DAxis(canvasElement)
     let threeDAxis = new Zdog.Illustration({
         // set canvas with selector
         element: canvasElement,
-        zoom: 20,
+        zoom: 16,
+        translate: {y:1.5},
         dragRotate: true,
         onDragStart: function () {
             spinning = false;
@@ -66,11 +74,52 @@ function Create3DAxis(canvasElement)
         translate: {z: 5}
     });
 
+    //Center Dot
     let origin3 = new Zdog.Shape({
         addTo: threeDAxis,
         stroke: 1,
         diameter: 2,
     });
+
+    //Labels
+
+    //x label
+    new Zdog.Text({
+        addTo: threeDAxis,
+        font: font,
+        stroke: 0.2,
+        value: 'x',
+        fontSize: 2,
+        color: '#633',
+        fill:true,
+        translate: {x: 7.4, y: 0.5},
+        rotate: {y: 0}
+    });
+    //y label
+    new Zdog.Text({
+        addTo: threeDAxis,
+        font: font,
+        stroke: 0.2,
+        value: 'y',
+        fontSize: 2,
+        color: '#363',
+        fill:true,
+        translate: {y: -7.7, z: -0.6},
+        rotate: {y: TAU/4}
+    });
+    //z label
+    new Zdog.Text({
+        addTo: threeDAxis,
+        font: font,
+        stroke: 0.2,
+        value: 'z',
+        fontSize: 2,
+        color: '#336',
+        translate: {z: 7.1, y:0.5},
+        rotate: {y: TAU/4},
+        fill: true
+    });
+
 
     function animate() {
         // rotate each frame
@@ -94,7 +143,7 @@ function Create2DAxis(canvasElement)
     let twoDAxis = new Zdog.Illustration({
         // set canvas with selector
         element: canvasElement,
-        zoom: 20,
+        zoom: 16,
         dragRotate: true,
         onDragStart: function () {
             isSpinning = false;
@@ -141,6 +190,31 @@ function Create2DAxis(canvasElement)
         stroke: 1,
         diameter: 2,
     });
+
+    //y label
+    new Zdog.Text({
+        addTo: twoDAxis,
+        font: font,
+        stroke: 0.2,
+        value: 'u',
+        fontSize: 2,
+        color: '#663',
+        fill:true,
+        translate: {x: 11.5, y: 0.5},
+        rotate: {y: 0}
+    });
+    //v label
+    new Zdog.Text({
+        addTo: twoDAxis,
+        font: font,
+        stroke: 0.2,
+        value: 'v',
+        fontSize: 2,
+        color: '#366',
+        fill:true,
+        translate: {y: -11.5, x: -0.6},
+    });
+
     twoDAxis.updateRenderGraph();
     return twoDAxis;
 }
