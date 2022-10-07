@@ -1,6 +1,7 @@
 // zdog-demo.js
 let isSpinning = true;
-let TAU = 6.283185;
+let TAU = Zdog.TAU;//Tau is a full turn.
+
 let length = 4.25;
 let offset = 1.25;
 
@@ -27,7 +28,7 @@ let xHat = new Zdog.Cone({
     stroke: false,
     color: '#633',
     backface: '#C44',
-    rotate: { y: -TAU/4 },
+    rotate: { y: TAU*3/4 },//3/4 turn
     translate: {x:5}
 });
 
