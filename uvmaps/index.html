@@ -117,18 +117,19 @@
         We need to label these new axes. Sadly, the letters "X" and "Y" are already taken! So we can't take those. How about "z" or "w"? Nope, also <a href="https://docs.blender.org/manual/en/latest/advanced/appendices/rotations.html#quaternion-mode" target="_blank">taken!</a> Let's move the other direction in the <a href="https://en.wikipedia.org/wiki/List_of_letters_used_in_mathematics_and_science">alphabet</a>... How about U and V?
     </p>
     <p>
-        That's right, The "UV" in UV Maps doesn't stand for anything. UV isn't an acronym. They are just the letters we use to define this new coordinate system.
+        That's right, The "UV" in UV Maps doesn't stand for anything. UV isn't an acronym. They are just the letters we use to label axes in another coordinate system.
     </p>
     <blockquote><p>
         Calling uv maps "UV's" is a lot like calling 3D spaces "XYZ's". XYZ's is a somewhat stupid sounding name and clumsy to say, but UV rolls off the tongue. Perhaps UV is also a kind of silly name, but we're all used to it.
         </p>
         <p>
-            Maybe this is why many artists prefer to call them "Texture Coordinates" instead. U and V are the coordinates in "texture coordinates".
+            Maybe this is why many artists prefer to call them "<strong>Texture Coordinates</strong>" instead. U and V are the coordinates in "texture coordinates".
         </p>
     </blockquote>
     <hr />
+    <h3>Same Data, Different View</h3>
     <p>I find it helpful to think of points as rows in a spreadsheet, and the various properties they have as the columns. This is, more or less, what the computer is doing. Many types of data, like 3D models, are basically just fancy spreadsheets or databases.</p>
-    <img src="img/pointInSpreadsheet.png" />
+    <img src="img/pointInSpreadsheet.png" /><br /><!--todo: add spacing below images in css -->
     <p>Like a spreadsheet, these numbers only have significance when we give them significance. A 3D file is just data, and UVs are just these numbers stored as part of the 3D model.</p>
 
     <p>With our fancy new UV coordinate, we can now plot the same point in a 3D space, and in a 2D space.</p>
@@ -138,8 +139,9 @@
     </div>
     <p>
     <blockquote>
-        <p>We often think of points as being "in" space. The point is "in" the XYZ 3D space above, and it's "in" the UV space above. Instead, let's separate some concepts. The visual representation of the object (a point represented by a small sphere floating in space) is one thing, and the data that the render is drawing from. It's the same piece of data that can be represented in multiple spaces.</p>
-        <p> It's not two separate things that are linked, it's the same blob of data being represented in different ways, like shown in different coordinate systems.
+        <p>We often think of points as being "in" space. The point is "in" the XYZ 3D space above, and it's "in" the UV space above. The visual representation of the object (a point represented by a small circle drawn on the screen at a particular location) is one thing, and the data that this drawing is using is another. It's the same piece of data that can be represented in multiple spaces.</p>
+        <p>This is why I find the spreadsheet view helpful. It's another representation of the data - a table. When we make spreadsheets, we can create many other representations of the data: charts and graphs and so on. As a way of thinking, it reinforces this separation of "data" as just some numbers on the computer somewhere, and systems that using the data, where it becomes meaningful.</p>
+        <p> It's not two separate points that are linked, it's the same point being shown in different ways. On the left, it's XYZ coordinates are shown in one 3D coordinate system. On the right, it's UV coordinates are shown in a 2D coordinate system, and above, it's U, V, X,Y, and Z points are shown in a table.
         </p>
     </blockquote>
     <p> Now that we have the UV coordinates, what do we do with them?</p>
