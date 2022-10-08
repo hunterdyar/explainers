@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="../css/cutestrap.min.css">
+    <link rel="stylesheet" href="../shared/css/cutestrap.min.css">
     <link rel="stylesheet" href="css/multiCanvas.css">
     <style>
         img{
@@ -47,8 +47,9 @@
         <li>Map</li>
         <li>Coordinate</li>
     </ul>
+    <blockquote>This article will slide between the different terms as we define and explore their related concepts... But for simplicity's sake, we will use "UV Maps" to start with.</blockquote>
     <p>
-    Creating UV Maps is done through a process called <strong>unwrapping</strong> or, depending on the context, <strong>projection</strong>. The specific steps or strategies to do this ("How do I create UV Maps?") is not in the scope of this article.
+    Creating UV Maps is done through a process called <strong>unwrapping</strong> or, depending on the context, <strong>projection</strong>. The specific steps or strategies to do this ("How do I create UV Maps?") is not in the scope of this article. In other words, this is not a software tutorial.
     </p>
 
     <p>
@@ -57,8 +58,11 @@
 
     <h2>Why Do We Need UV's?</h2>
 
-    <p>Rendering 3D Graphics is hard. It's really hard! Large and complex scenes require a lot of detail. Every face, every belt buckle, every crack in the pavement, every button on every jacket needs to be a 3D shape. This is computationally expensive to render out.</p>
+    <p>Rendering 3D Graphics is hard. It's really hard! In 3D worlds, large and complex scenes require a lot of detail. Every face, every belt buckle, every crack in the pavement, every button on every jacket needs to be a 3D shape. This is computationally expensive to render out.</p>
     <p>Enter: Textures. What if we could just slap an image on a 3D model? We could include small details - like jacket buttons - on the image, and stick it on a plain cube. We get to see lots of nice detail, the computer doesn't have as many 3D shapes to render. Everyone wins!</p>
+
+    <!-- todo: Side by side wireframe/texture view of a high detail mesh and a low-detail mesh with subtitles like "Slow and hard for a computer to render" and "fast and easy for computers, so we can have more stuff" -->
+
     <p>Textures allow us to reduce the number of polygons the rendering engine needs to draw <em>significantly</em>.</p>
     <p>I'm sure you've seen the effect:</p>
     <img src="img/goldeneye.jpg" alt="A screenshot of the character Oddjob from the game Goldeneye for the N64" class="ta-center" />
@@ -72,24 +76,25 @@
     <p>UV Maps are the connection ("map") between the world of 3D meshes and the world of 2D images.</p>
 <h2>A Less Boring Cube</h2>
   <p>Say hello to my friend, this boring cube</p>
-    <div class="canvasContainer" style="width:600px;height:300px">
-    <iframe src="sketches/plainCube.html" style="border:none;width:600px;height:300px" scrolling="no"></iframe>
+    <div class="canvasContainer" style="width:300px;height:300px">
+    <iframe src="sketches/plainCube.html" style="border:none;width:300px;height:300px" scrolling="no"></iframe>
     </div>
     <p>
-  Let's say we want to make it look better, using an image file. Say, this image:
+  Let's say we want to make it look better, using an image file. Games need wooden crates to smash up, so let's use this image:
     </p>
   <img id="crateImg" src="sketches/textures/crate1_diffuse.png" width = "300"/>
     <br />
     <p>
         We want to apply it to our cube. Specifically, we just want to apply it to each of the 6 faces of our cube. like this:
     </p>
-    <div class="canvasContainer" style="width:600px;height:300px">
-        <iframe src="sketches/texturedCube.html" style="border:none;width: 600px;height: 300px" scrolling="no"></iframe>
+    <div class="canvasContainer" style="width:300px;height:300px">
+        <iframe src="sketches/texturedCube.html" style="border:none;width: 300px;height: 300px" scrolling="no"></iframe>
     </div>
-    <hr />
+    <br />
     <p>
         How do we do that?
     </p>
+    <hr />
     <h2>Introducing UVs</h2>
     <p>Let's start with a single point in space.</p>
     <div class="canvasContainer" style="width:300px;height:300px">
@@ -99,14 +104,15 @@
         <em>We will follow the standard convention of using red, green, and blue for x, y, and z; respectively. It's easy to remember, just think of the acronyms rgb and xyz. They line up. <br /><br /> You can click and drag on this example.</em>
     </p>
     <p>
-        I've given it the arbitrary coordinates of (1,2,3), for simplicities sake. It's position on the x-axis is "1", on y is "2", and on z is "3".
+        I've given the orange point the arbitrary coordinates of (1,2,3). That mean's it's position on the x-axis is "1", on the y-axis is is "2", and on z-axis is "3".
     </p>
     <p>
-        This point has 3 number values, which are positions on number lines in a <a href="https://en.wikipedia.org/wiki/Cartesian_coordinate_system" target="_blank">cartesian coordinate system</a>. but now it's time for the big trick. Let's give it two more.
+        This point has 3 number values, which are positions on number lines in a <a href="https://en.wikipedia.org/wiki/Cartesian_coordinate_system" target="_blank">cartesian coordinate system</a>. Now it's time for the big trick... Let's give the point two more numbers.
     </p>
     <p>
         The same object - the same little blob of data on our computer - that is storing the numbers "x","y", and "z", we will give it two more numbers to hold on to. These new numbers will also be positions on a number line - ie: in a coordinate system, but this new coordinate system will only have two dimensions.
     </p>
+
     <p>
         We need to label these new axes. Sadly, the letters "X" and "Y" are already taken! So we can't take those. How about "z" or "w"? Nope, also <a href="https://docs.blender.org/manual/en/latest/advanced/appendices/rotations.html#quaternion-mode" target="_blank">taken!</a> Let's move the other direction in the <a href="https://en.wikipedia.org/wiki/List_of_letters_used_in_mathematics_and_science">alphabet</a>... How about U and V?
     </p>
@@ -131,7 +137,11 @@
         <canvas class="zdog-singlePoint2d2" width="300px" height="300px"></canvas>
     </div>
     <p>
-
+    <blockquote>
+        <p>We often think of points as being "in" space. The point is "in" the XYZ 3D space above, and it's "in" the UV space above. Instead, let's separate some concepts. The visual representation of the object (a point represented by a small sphere floating in space) is one thing, and the data that the render is drawing from. It's the same piece of data that can be represented in multiple spaces.</p>
+        <p> It's not two separate things that are linked, it's the same blob of data being represented in different ways, like shown in different coordinate systems.
+        </p>
+    </blockquote>
     <p> Now that we have the UV coordinates, what do we do with them?</p>
 
     <h2>Sampling Textures</h2>
@@ -173,7 +183,7 @@
 </article>
 
 <script src="sketches/zdogUtility.js"></script>
-<script src="/uvmaps/sketchesketches/singlePoint.js"></script>
-<script src="/uvmaps/sketchesketches/textureSample.js"></script>
+<script src="sketches/singlePoint.js"></script>
+<script src="sketches/textureSample.js"></script>
 </body>
 </html>

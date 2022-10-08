@@ -1,7 +1,7 @@
 Zfont.init(Zdog);
 
 let font = new Zdog.Font({
-    src: "../img/fredokaone.ttf"
+    src: "../../shared/fonts/fredokaone.ttf"
 })
 
 let length = 4.25;

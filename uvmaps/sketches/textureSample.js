@@ -4,13 +4,13 @@ const ctx = canvas.getContext("2d");
 const image = document.getElementById("crateImg");
 
 image.addEventListener("load", (e) => {
-    // ctx.drawImage(image, 0, 0, 300, 300);
-    drawPlainUV(uvCanvas);
+    //ctx.drawImage(image, 0, 0, 300, 300);
+    drawLabeledUV(uvCanvas);
 });
 
 //todo: replace this with drawing without Illustration, so the bg doesnt get cleared, so the image can get drawn below it.
 //I think drawing to an SVG will be the way to go.
-function drawPlainUV(canvas) {
+function drawLabeledUV(canvas) {
     let twoDAxis = Create2DAxis("#"+canvas);
     twoDAxis.color = "";
 
