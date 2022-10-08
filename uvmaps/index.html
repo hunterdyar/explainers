@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/cutestrap.min.css">
+    <link rel="stylesheet" href="css/multiCanvas.css">
+    <style>
+        img{
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .canvasContainer{
+            display: block;
+            border: 1px red solid;
+            padding: 0px;
+            margin: 0px auto;
+            background: #dcf5f3;
+        }
+        canvas{
+            display: inline-block;
+            border: 1px blue solid;
+            padding: 0 0 0 0;
+        }
+        .withBG{
+            background-image:    url(/uvmaps/img/blenderUV.png);
+        }
+    </style>
+    <script src="js/zdog.dist.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/zfont/dist/zfont.min.js"></script>
+</head>
+<body>
+<article class="wrapper">
+
+  <h1>What are UV Maps?</h1>
+    <p>
+        UV Maps are a solution to the following problem: <em>How do we put images onto the surfaces of 3D models?</em>
+    </p>
+    <h2>Introduction</h2>
+    <p>
+    To begin, some clarifications. UV maps are also referred to as <strong>texture maps</strong>, <strong>UV Coordinates</strong>, or <strong>Texture Coordinates</strong>. There are other terms that are used, but most of them are various combinations of the following words:
+    </p>
+    <ul>
+        <li>UV</li>
+        <li>Texture</li>
+        <li>Map</li>
+        <li>Coordinate</li>
+    </ul>
+    <p>
+    Creating UV Maps is done through a process called <strong>unwrapping</strong> or, depending on the context, <strong>projection</strong>. The specific steps or strategies to do this ("How do I create UV Maps?") is not in the scope of this article.
+    </p>
+
+    <p>
+    At the end of this article, we will circle back and define the terms more academically. For now, I am going to call the-subject-of-this-page "UV's".
+    </p>
+
+    <h2>Why Do We Need UV's?</h2>
+
+    <p>Rendering 3D Graphics is hard. It's really hard! Large and complex scenes require a lot of detail. Every face, every belt buckle, every crack in the pavement, every button on every jacket needs to be a 3D shape. This is computationally expensive to render out.</p>
+    <p>Enter: Textures. What if we could just slap an image on a 3D model? We could include small details - like jacket buttons - on the image, and stick it on a plain cube. We get to see lots of nice detail, the computer doesn't have as many 3D shapes to render. Everyone wins!</p>
+    <p>Textures allow us to reduce the number of polygons the rendering engine needs to draw <em>significantly</em>.</p>
+    <p>I'm sure you've seen the effect:</p>
+    <img src="img/goldeneye.jpg" alt="A screenshot of the character Oddjob from the game Goldeneye for the N64" class="ta-center" />
+    <p class="ta-center"><em>Oddjob, from Goldeneye</em></p>
+    <p>Modeling a 3D face is hard! But taking a photo of a real face and sticking it on a 3D model? That's easy. And <em>basically</em> just as good.</p>
+    <p>We use this trick all the time in 3D modeling! </p>
+    <img src="img/goldeneye2.jpg" alt="A screenshot James Bond in a doorway from the game Goldeneye for the N64" class="ta-center" />
+    <p class="ta-center"><em>This is recognizably Pierce Brosnan as James Bond! In a game from 1997, running on a Nintendo 64!</em></p>
+    <p>If we didn't have 3D coordinates, the walls and doors here would have to be solid colors. They're flat objects, it would be a waste to add mesh geometry just to color things differently. We really do want to just apply an image onto the flat surface of my 3D model.</p>
+    <blockquote>UV Maps allow us to apply 2 dimensional images onto the surfaces of 3 dimensional shapes.</blockquote>
+    <p>UV Maps are the connection ("map") between the world of 3D meshes and the world of 2D images.</p>
+<h2>A Less Boring Cube</h2>
+  <p>Say hello to my friend, this boring cube</p>
+    <div class="canvasContainer" style="width:600px;height:300px">
+    <iframe src="sketches/plainCube.html" style="border:none;width:600px;height:300px" scrolling="no"></iframe>
+    </div>
+    <p>
+  Let's say we want to make it look better, using an image file. Say, this image:
+    </p>
+  <img id="crateImg" src="sketches/textures/crate1_diffuse.png" width = "300"/>
+    <br />
+    <p>
+        We want to apply it to our cube. Specifically, we just want to apply it to each of the 6 faces of our cube. like this:
+    </p>
+    <div class="canvasContainer" style="width:600px;height:300px">
+        <iframe src="sketches/texturedCube.html" style="border:none;width: 600px;height: 300px" scrolling="no"></iframe>
+    </div>
+    <hr />
+    <p>
+        How do we do that?
+    </p>
+    <h2>Introducing UVs</h2>
+    <p>Let's start with a single point in space.</p>
+    <div class="canvasContainer" style="width:300px;height:300px">
+        <canvas class="withPageColor, zdog-singlePoint" width="300px" height="300px" style="margin: 0"></canvas>
+    </div>
+    <p class="ta-center">
+        <em>We will follow the standard convention of using red, green, and blue for x, y, and z; respectively. It's easy to remember, just think of the acronyms rgb and xyz. They line up. <br /><br /> You can click and drag on this example.</em>
+    </p>
+    <p>
+        I've given it the arbitrary coordinates of (1,2,3), for simplicities sake. It's position on the x-axis is "1", on y is "2", and on z is "3".
+    </p>
+    <p>
+        This point has 3 number values, which are positions on number lines in a <a href="https://en.wikipedia.org/wiki/Cartesian_coordinate_system" target="_blank">cartesian coordinate system</a>. but now it's time for the big trick. Let's give it two more.
+    </p>
+    <p>
+        The same object - the same little blob of data on our computer - that is storing the numbers "x","y", and "z", we will give it two more numbers to hold on to. These new numbers will also be positions on a number line - ie: in a coordinate system, but this new coordinate system will only have two dimensions.
+    </p>
+    <p>
+        We need to label these new axes. Sadly, the letters "X" and "Y" are already taken! So we can't take those. How about "z" or "w"? Nope, also <a href="https://docs.blender.org/manual/en/latest/advanced/appendices/rotations.html#quaternion-mode" target="_blank">taken!</a> Let's move the other direction in the <a href="https://en.wikipedia.org/wiki/List_of_letters_used_in_mathematics_and_science">alphabet</a>... How about U and V?
+    </p>
+    <p>
+        That's right, The "UV" in UV Maps doesn't stand for anything. UV isn't an acronym. They are just the letters we use to define this new coordinate system.
+    </p>
+    <blockquote><p>
+        Calling uv maps "UV's" is a lot like calling 3D spaces "XYZ's". XYZ's is a somewhat stupid sounding name and clumsy to say, but UV rolls off the tongue. Perhaps UV is also a kind of silly name, but we're all used to it.
+        </p>
+        <p>
+            Maybe this is why many artists prefer to call them "Texture Coordinates" instead. U and V are the coordinates in "texture coordinates".
+        </p>
+    </blockquote>
+    <hr />
+    <p>I find it helpful to think of points as rows in a spreadsheet, and the various properties they have as the columns. This is, more or less, what the computer is doing. Many types of data, like 3D models, are basically just fancy spreadsheets or databases.</p>
+    <img src="img/pointInSpreadsheet.png" />
+    <p>Like a spreadsheet, these numbers only have significance when we give them significance. A 3D file is just data, and UVs are just these numbers stored as part of the 3D model.</p>
+
+    <p>With our fancy new UV coordinate, we can now plot the same point in a 3D space, and in a 2D space.</p>
+    <div class="canvasContainer" style="width:620px;height:300px">
+        <canvas class="zdog-singlePoint3d" width="300px" height="300px"></canvas>
+        <canvas class="zdog-singlePoint2d2" width="300px" height="300px"></canvas>
+    </div>
+    <p>
+
+    <p> Now that we have the UV coordinates, what do we do with them?</p>
+
+    <h2>Sampling Textures</h2>
+    <p>An image that we sample from to use on a 3D model is called a <strong>texture</strong>.
+    <p>We can use the UV values to look up the value of whatever pixel is at that coordinate in an image. This lookup process is called <strong>sampling</strong>.</p>
+    <p>We could use the U and V values as the x/y position of the pixel in an image. However, there are some drawbacks to this approach. The biggest is that it makes it very difficult to switch images if they are different resolutions.
+        Similarly, consider is if the <em>same</em> image has versions with of resolutions. Many games have multiple sizes of a texture at different sizes, for performance reasons. You can sample smaller textures for models that are further away from the camera.</p>
+    </p>
+    <p>We need a way to sample textures, using the UV coordinates, that is independent of the image resolution.</p>
+    <p>
+        The solution is percentages. (More accurately, <a href="https://en.wikipedia.org/wiki/Linear_interpolation" target="_blank">interpolation</a>). Instead of U or V being the direct coordinate of the pixel of the texture, it's a percentage along the length or height of the image.
+    </p>
+    <p>Let zero be the bottom (and left) of the image, and one be the top (and right). With UV coordinates between 0 and 1, we can sample anywhere on the image. So long as are images are the same <em>aspect ratio</em>, it's easy to have everything behave as expected.</p>
+    <p>That's why textures are almost always <strong>square</strong>, it prevents the textures from looking squashed or stressed.</p>
+    <!-- Screenshots of various textures on 3D models. -->
+    <div class="canvasContainer" style="width:300px;height:300px">
+        <canvas id ="textureSampleCanvas" class="zdog-textureSample" width="300px" height="300px"></canvas>
+    </div>
+
+    <h3>
+        Wrap Modes
+    </h3>
+    <p>What happens when the UV values in the model are less than 0 or larger than 1? The behaviour is called the "wrap mode", and we will cover it elsewhere. For now, let's assume we our coordinates are "appropriately" between 0 and 1.</p>
+    <!-- todo: a babylon project where there are a few 3D models, and we can choose different textures and wrap modes for them with the GUI -->
+    <hr />
+    <div class="canvasContainer" style="width:600px;height:400px">
+        <iframe src="sketches/babylon/babylon1.html" scrolling="no" style="width: 600px;height:400px"></iframe>
+    </div>
+
+    <hr />
+    <h3>Assets Used</h3>
+    <ul>
+        <li> <a href="https://opengameart.org/node/8765" target="_blank">Wood Crate by Luke.RUSTLTD</a>, published CC0 at opengameart.org </li>
+        <li> UV Test grid image generated from <a href="https://www.blender.org/" target="_blank">Blender</a>.</li>
+        <li> Examples created with <a href="https://threejs.org/" target="_blank">ThreeJS</a>, <a href="https://www.babylonjs.com/" target="_blank">Babylon.js</a>, and <a href="https://zzz.dog/" target="_blank">ZDog</a> with <a href="https://github.com/jaames/zfont#installation" target="_blank">zfont</a> plugin.</li>
+        <li> Font in some diagrams is <a href="https://fonts.google.com/specimen/Fredoka+One" target="_blank">Fredoka One</a>. </li>
+        <li> Website created in plain old HTML, with some css from <a href="https://www.cutestrap.com/" target="_blank">cutestrap</a>.</li>
+    </ul>
+</article>
+
+<script src="sketches/zdogUtility.js"></script>
+<script src="/uvmaps/sketchesketches/singlePoint.js"></script>
+<script src="/uvmaps/sketchesketches/textureSample.js"></script>
+</body>
+</html>
