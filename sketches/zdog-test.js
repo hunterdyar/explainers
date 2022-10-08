@@ -1,7 +1,6 @@
 // zdog-demo.js
 function drawSingleFace(elementLeft,elementRight) {
 
-
     let isSpinning = true;
     let TAU = Zdog.TAU;//Tau is a full turn.
 

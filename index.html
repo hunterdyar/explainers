@@ -16,12 +16,15 @@
             border: 1px red solid;
             padding: 0px;
             margin: 0px auto;
+            background: #dcf5f3;
         }
         canvas{
             display: inline-block;
             border: 1px blue solid;
             padding: 0 0 0 0;
-            background: #dcf5f3;//fdb
+        }
+        .withBG{
+            background-image:    url(/img/blenderUV.png);
         }
     </style>
     <script src="js/zdog.dist.min.js"></script>
@@ -56,6 +59,7 @@
 
     <p>Rendering 3D Graphics is hard. It's really hard! Large and complex scenes require a lot of detail. Every face, every belt buckle, every crack in the pavement, every button on every jacket needs to be a 3D shape. This is computationally expensive to render out.</p>
     <p>Enter: Textures. What if we could just slap an image on a 3D model? We could include small details - like jacket buttons - on the image, and stick it on a plain cube. We get to see lots of nice detail, the computer doesn't have as many 3D shapes to render. Everyone wins!</p>
+    <p>Textures allow us to reduce the number of polygons the rendering engine needs to draw <em>significantly</em>.</p>
     <p>I'm sure you've seen the effect:</p>
     <img src="img/goldeneye.jpg" alt="A screenshot of the character Oddjob from the game Goldeneye for the N64" class="ta-center" />
     <p class="ta-center"><em>Oddjob, from Goldeneye</em></p>
@@ -74,7 +78,7 @@
     <p>
   Let's say we want to make it look better, using an image file. Say, this image:
     </p>
-  <img src="sketches/textures/crate1_diffuse.png"  width = "300"/>
+  <img id="crateImg" src="sketches/textures/crate1_diffuse.png"  width = "300"/>
     <br />
     <p>
         We want to apply it to our cube. Specifically, we just want to apply it to each of the 6 faces of our cube. like this:
@@ -89,7 +93,7 @@
     <h2>Introducing UVs</h2>
     <p>Let's start with a single point in space.</p>
     <div class="canvasContainer" style="width:300px;height:300px">
-        <canvas class="zdog-singlePoint" width="300px" height="300px" style="margin: 0"></canvas>
+        <canvas class="withPageColor, zdog-singlePoint" width="300px" height="300px" style="margin: 0"></canvas>
     </div>
     <p class="ta-center">
         <em>We will follow the standard convention of using red, green, and blue for x, y, and z; respectively. It's easy to remember, just think of the acronyms rgb and xyz. They line up. <br /><br /> You can click and drag on this example.</em>
@@ -129,9 +133,30 @@
     <p>
 
     <p> Now that we have the UV coordinates, what do we do with them?</p>
+
+    <h2>Sampling Textures</h2>
+    <p>An image that we sample from to use on a 3D model is called a <strong>texture</strong>.
+    <p>We can use the UV values to look up the value of whatever pixel is at that coordinate in an image. This lookup process is called <strong>sampling</strong>.</p>
+    <p>We could use the U and V values as the x/y position of the pixel in an image. However, there are some drawbacks to this approach. The biggest is that it makes it very difficult to switch images if they are different resolutions.
+        Similarly, consider is if the <em>same</em> image has versions with of resolutions. Many games have multiple sizes of a texture at different sizes, for performance reasons. You can sample smaller textures for models that are further away from the camera.</p>
+    </p>
+    <p>We need a way to sample textures, using the UV coordinates, that is independent of the image resolution.</p>
+    <p>
+        The solution is percentages. (More accurately, <a href="https://en.wikipedia.org/wiki/Linear_interpolation" target="_blank">interpolation</a>). Instead of U or V being the direct coordinate of the pixel of the texture, it's a percentage along the length or height of the image.
+    </p>
+    <p>Let zero be the bottom (and left) of the image, and one be the top (and right). With UV coordinates between 0 and 1, we can sample anywhere on the image. So long as are images are the same <em>aspect ratio</em>, it's easy to have everything behave as expected.</p>
+    <p>That's why textures are almost always <strong>square</strong>, it prevents the textures from looking squashed or stressed.</p>
+    <!-- Screenshots of various textures on 3D models. -->
+    <div class="canvasContainer" style="width:300px;height:300px">
+        <canvas id ="textureSampleCanvas" class="zdog-textureSample" width="300px" height="300px"></canvas>
+    </div>
+
+    <h3>
+        Wrap Modes
+    </h3>
+    <p>What happens when the UV values in the model are less than 0 or larger than 1? The behaviour is called the "wrap mode", and we will cover it elsewhere. For now, let's assume we our coordinates are "appropriately" between 0 and 1.</p>
+    <!-- todo: a babylon project where there are a few 3D models, and we can choose different textures and wrap modes for them with the GUI -->
     <hr />
-
-
     <div class="canvasContainer" style="width:600px;height:400px">
         <iframe src="sketches/babylon/babylon1.html"  scrolling="no" style="width: 600px;height:400px"></iframe>
     </div>
@@ -149,7 +174,6 @@
 
 <script src="sketches/zdogUtility.js"></script>
 <script src="/sketches/singlePoint.js"></script>
-<!--<script src="/sketches/zdog-test.js"></script>-->
-
+<script src="/sketches/textureSample.js"></script>
 </body>
 </html>

@@ -22,14 +22,12 @@ function Create3DAxis(canvasElement)
             spinning = false;
         },
     });
-    console.log(threeDAxis);
-    let xLine = new Zdog.Shape({
+    new Zdog.Shape({
         addTo: threeDAxis,
         path: [{x: offset, y: 0}, {x: length, y: 0}],
         color: "#C44"
     });
-
-    let xHat = new Zdog.Cone({
+    new Zdog.Cone({
         addTo: threeDAxis,
         diameter: 2,
         length: 2,
@@ -39,14 +37,12 @@ function Create3DAxis(canvasElement)
         rotate: {y: TAU * 3 / 4},//3/4 turn
         translate: {x: 5}
     });
-
-    let yLine = new Zdog.Shape({
+    new Zdog.Shape({
         addTo: threeDAxis,
         path: [{x: 0, y: -offset}, {x: 0, y: -length}],
         color: "#4C4"
     });
-
-    let yHat = new Zdog.Cone({
+    new Zdog.Cone({
         addTo: threeDAxis,
         diameter: 2,
         length: 2,
@@ -56,7 +52,6 @@ function Create3DAxis(canvasElement)
         rotate: {x: TAU / 4},
         translate: {y: -5}
     });
-
     let zLine = new Zdog.Shape({
         addTo: threeDAxis,
         path: [{x: 0, y: 0, z: offset}, {x: 0, z: length}],
