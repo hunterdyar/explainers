@@ -156,12 +156,44 @@
     <p>
         The solution is percentages. (More accurately, <a href="https://en.wikipedia.org/wiki/Linear_interpolation" target="_blank">interpolation</a>). Instead of U or V being the direct coordinate of the pixel of the texture, it's a percentage along the length or height of the image.
     </p>
-    <p>Let zero be the bottom (and left) of the image, and one be the top (and right). With UV coordinates between 0 and 1, we can sample anywhere on the image. So long as are images are the same <em>aspect ratio</em>, it's easy to have everything behave as expected.</p>
-    <p>That's why textures are almost always <strong>square</strong>, it prevents the textures from looking squashed or stressed.</p>
-    <!-- Screenshots of various textures on 3D models. -->
+    <p>Let zero be the bottom (and left) of the image, and one be the top (and right). With UV coordinates between 0 and 1, we can sample anywhere on the image. So long as are images are the same <strong>aspect ratio</strong>, it's easy to have everything behave as expected.</p>
     <div class="canvasContainer" style="width:300px;height:300px">
-        <canvas id ="textureSampleCanvas" class="zdog-textureSample" width="300px" height="300px"></canvas>
+        <canvas id ="textureSampleCanvas1" class="zdog-textureSample" width="300px" height="300px"></canvas>
     </div>
+    <p>
+        With our example point from above, the UV coordiantes were u:0.5 and v:0.5. This is the dead center of the UV coordinates.
+        If we "sample" this point, shown in orange on the bottom left, we can apply it to the point, as shown below, right.
+    </p>
+    <div class="canvasContainer" style="width:620px;height:300px">
+<!--        <canvas id ="textureSampleCanvas2" class="zdog-textureSample" width="300px" height="300px"></canvas>-->
+        <svg width="300px" height="300px">
+            <style>
+                @font-face {
+                    font-family: fredokaone;
+                    src: url(../shared/fonts/fredokaone.ttf);
+                }
+                text{
+                    font: bold 2pt fredokaone;
+                    font-size: 2px;
+                    font-style: normal;}
+            </style>
+            <image href="sketches/textures/crate1_diffuse.png" x="-5" y ="-5" height="10" width="10" />
+
+            <text x="-8" y="5.5" fill="#466">0</text>
+            <text x="-8" y="-3" fill="#466">1</text>
+            <text x="-5" y="8.5" fill="#664">0</text>
+            <text x="3" y="8.5" fill="#664">1</text>
+        </svg>
+        <canvas id ="textureSampleCanvas3" class="zdog-textureSample" width="300px" height="300px"></canvas>
+
+    </div>
+    <br />
+
+
+    <p>This is why textures are <strong>square</strong>. Having a 1:1 <a href="https://en.wikipedia.org/wiki/Aspect_ratio_(image)" target="_blank">aspect ratio</a> prevents the textures from looking squashed or stretched.</p>
+    <!-- Screenshots of various textures on 3D models. -->
+
+
 
     <h3>
         Wrap Modes
@@ -172,7 +204,13 @@
     <div class="canvasContainer" style="width:600px;height:400px">
         <iframe src="sketches/babylon/babylon1.html" scrolling="no" style="width: 600px;height:400px"></iframe>
     </div>
-
+    <hr />
+    <h2>Further Reading</h2>
+    <ul>
+        <li>The Changing Shape of Cinema: The History of Aspect Ratio. <a href="https://www.youtube.com/watch?v=3CgrMsjGk7k"target="_blank">On Youtube</a></li>
+        <li>Blender Manual page on <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/uv/applying_image.html" target="_blank">Using UV Maps</a></li>
+        <li>Wikipedia: <a href="https://en.wikipedia.org/wiki/Mipmap" target="_blank">Mipmaps</a> </li>
+    </ul>
     <hr />
     <h3>Assets Used</h3>
     <ul>
