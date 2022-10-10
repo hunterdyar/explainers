@@ -37,10 +37,10 @@
 
     // This creates a basic Babylon Scene object (non-mesh)
     const scene = new BABYLON.Scene(engine);
-
+    scene.clearColor = new BABYLON.Color3(1,1,1);//white bg
     var crateTex = new BABYLON.Texture("../textures/crate1_diffuse.png",scene);
     // This creates and positions a free camera (non-mesh)
-    const camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+    const camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -5), scene);
     // This targets the camera to scene origin
     camera.setTarget(BABYLON.Vector3.Zero());
     // This attaches the camera to the canvas
@@ -72,11 +72,11 @@
 
     var uv = {};
 
-
-
     // GUI
     var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
     var loadedGUI = advancedTexture.parseFromURLAsync("./guiTexture.json");
+    img = advancedTexture.getControlByName("Image");
+    // img.source = "../textures/crate1_diffuse.png";
     function rayFilter(mesh) {
       if (mesh == marker) {
         return false;
@@ -86,8 +86,9 @@
     function castRay()
     {
       pointGUI = advancedTexture.getControlByName("Point");
-
-
+      pointGUI2 = advancedTexture.getControlByName("Point2");
+      labelxyz = advancedTexture.getControlByName("LabelXYZ");
+      labeluv = advancedTexture.getControlByName("LabelUV");
 
       var ray = scene.createPickingRay(scene.pointerX,scene.pointerY,BABYLON.Matrix.Identity(),camera);
       var pickResult = scene.pickWithRay(ray,rayFilter);
@@ -101,24 +102,28 @@
         uv = pickResult.getTextureCoordinates();
         var facetIndex = pickResult.pickedMesh.getClosestFacetAtCoordinates(p.x, p.y, p.z);
 
-        console.log("u: "+uv.x.toFixed(4)+" y:"+uv.y.toFixed(4))
-        // header.text = "u: "+uv.x.toFixed(4)+" y:"+uv.y.toFixed(4);
+        if(labelxyz) {
+          labelxyz.text = "x: " + p.x.toFixed(2) + " y:" + p.y.toFixed(2) + " z: "+ p.z.toFixed(2);
+        }
+        if(labeluv) {
+          labeluv.text = "u: " + uv.x.toFixed(2) + " v:" + uv.y.toFixed(2);
+        }
+
         if(pointGUI){
           pointGUI.left =  uv.x * 200 - 100;
           pointGUI.top = -uv.y * 200 + 100;
-
-        }else{
-          console.log("WHY NULL!?!?");
         }
-
-        if (facetIndex == null) {
-          return;
+        if(pointGUI2){
+          pointGUI2.left =  uv.x * 200 - 100;
+          pointGUI2.top = -uv.y * 200 + 100;
         }
-
-        var normal = pickResult.pickedMesh.getFacetNormal(facetIndex);     // its normal (Vector3)
-        var position = pickResult.pickedMesh.getFacetPosition(facetIndex);  // its barycenter position in the local space (Vector3)
-
-        // console.log("data:" + cube);
+      }else{
+        if(labelxyz) {
+          labelxyz.text = "";
+        }
+        if(labeluv) {
+          labeluv.text = "";
+        }
       }
     }
 

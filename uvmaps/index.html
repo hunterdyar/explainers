@@ -85,7 +85,7 @@
   <img id="crateImg" src="sketches/textures/crate1_diffuse.png" width = "300"/>
     <br />
     <p>
-        We want to apply it to our cube. Specifically, we just want to apply it to each of the 6 faces of our cube. like this:
+        We want to apply it to our cube. In this case, we want to paint it onto each of the 6 faces of our cube. like this:
     </p>
     <div class="canvasContainer" style="width:300px;height:300px">
         <iframe src="sketches/texturedCube.html" style="border:none;width: 300px;height: 300px" scrolling="no"></iframe>
@@ -110,25 +110,25 @@
         This point has 3 number values, which are positions on number lines in a <a href="https://en.wikipedia.org/wiki/Cartesian_coordinate_system" target="_blank">cartesian coordinate system</a>. Now it's time for the big trick... Let's give the point two more numbers.
     </p>
     <p>
-        The same object - the same little blob of data on our computer - that is storing the numbers "x","y", and "z", we will give it two more numbers to hold on to. These new numbers will also be positions on a number line - ie: in a coordinate system, but this new coordinate system will only have two dimensions.
+        The same object - the same little blob of data on our computer - that is storing the numbers "x","y", and "z", we will give it two more numbers to hold on to. These new numbers will also be positions on a number line (ie: in a coordinate system). This new coordinate system will only have two dimensions.
     </p>
 
     <p>
-        We need to label these new axes. Sadly, the letters "X" and "Y" are already taken! So we can't take those. How about "z" or "w"? Nope, also <a href="https://docs.blender.org/manual/en/latest/advanced/appendices/rotations.html#quaternion-mode" target="_blank">taken!</a> Let's move the other direction in the <a href="https://en.wikipedia.org/wiki/List_of_letters_used_in_mathematics_and_science">alphabet</a>... How about U and V?
+        We need to label these new axes. X and Y make sense, but the letters "X" and "Y" are already being used! So we can't use those. How about "z" or "w"? Nope, also <a href="https://docs.blender.org/manual/en/latest/advanced/appendices/rotations.html#quaternion-mode" target="_blank">taken!</a> Let's move the other direction in the <a href="https://en.wikipedia.org/wiki/List_of_letters_used_in_mathematics_and_science">alphabet</a>... How about U and V?
     </p>
     <p>
-        That's right, The "UV" in UV Maps doesn't stand for anything. UV isn't an acronym. They are just the letters we use to label axes in another coordinate system.
+        That's right, The "UV" in UV Maps doesn't stand for anything. UV isn't an acronym. U and V are just the next arbitrary letters that we use to label axes in a coordinate system.
     </p>
     <blockquote><p>
-        Calling uv maps "UV's" is a lot like calling 3D spaces "XYZ's". XYZ's is a somewhat stupid sounding name and clumsy to say, but UV rolls off the tongue. Perhaps UV is also a kind of silly name, but we're all used to it.
+        Calling uv maps "UV's" is a lot like calling 3D spaces "XYZ's". XYZ's is somewhat stupid sounding, and clumsy to say - but UV rolls off the tongue. Perhaps UV is also kind of a silly name. Regardless, we're all used to it.
         </p>
         <p>
-            Maybe this is why many artists prefer to call them "<strong>Texture Coordinates</strong>" instead. U and V are the coordinates in "texture coordinates".
+            Maybe this is why many artists prefer to call them "<strong>Texture Coordinates</strong>" instead. U and V are the <strong>coordinates</strong> in "texture coordinates".
         </p>
     </blockquote>
     <hr />
     <h3>Same Data, Different View</h3>
-    <p>I find it helpful to think of points as rows in a spreadsheet, and the various properties they have as the columns. This is, more or less, what the computer is doing. Many types of data, like 3D models, are basically just fancy spreadsheets or databases.</p>
+    <p>I find it helpful to think of points as rows in a spreadsheet, and the various values they store as the columns. This is, more or less, what the computer is doing. Many types of data, like 3D models, are basically just fancy spreadsheets or databases.</p>
     <img src="img/pointInSpreadsheet.png" /><br /><!--todo: add spacing below images in css -->
     <p>Like a spreadsheet, these numbers only have significance when we give them significance. A 3D file is just data, and UVs are just these numbers stored as part of the 3D model.</p>
 
@@ -139,22 +139,23 @@
     </div>
     <p>
     <blockquote>
-        <p>We often think of points as being "in" space. The point is "in" the XYZ 3D space above, and it's "in" the UV space above. The visual representation of the object (a point represented by a small circle drawn on the screen at a particular location) is one thing, and the data that this drawing is using is another. It's the same piece of data that can be represented in multiple spaces.</p>
-        <p>This is why I find the spreadsheet view helpful. It's another representation of the data - a table. When we make spreadsheets, we can create many other representations of the data: charts and graphs and so on. As a way of thinking, it reinforces this separation of "data" as just some numbers on the computer somewhere, and systems that using the data, where it becomes meaningful.</p>
-        <p> It's not two separate points that are linked, it's the same point being shown in different ways. On the left, it's XYZ coordinates are shown in one 3D coordinate system. On the right, it's UV coordinates are shown in a 2D coordinate system, and above, it's U, V, X,Y, and Z points are shown in a table.
+        <p>We often think of points as being "in" space. The point is "in" the XYZ space above, and it's "in" the UV space above. But on computers, this thinking isn't quite right.</p>
+        <p>This is why I find the spreadsheet view helpful. Like the drawings, it's another representation of the data. It's a table that shows the values directly. When we make spreadsheets, we can create many other representations of the data: charts and graphs and so on. As a way of thinking, it reinforces this separation of "data" as just some numbers, and systems that use this data (like plotting it as a point on a coordinate system).</p>
+        <p> So in our example, we didn't draw two separate points that are linked. Instead, we drew the same point (the same data), but shown in different ways. Above on the left, it's XYZ coordinates are shown in one 3D coordinate system. On the right, its UV coordinates are shown in a 2D coordinate system, and above those, it's U, V, X, Y, and Z points are shown in a table.
         </p>
     </blockquote>
     <p> Now that we have the UV coordinates, what do we do with them?</p>
 
     <h2>Sampling Textures</h2>
-    <p>An image that we sample from to use on a 3D model is called a <strong>texture</strong>.
-    <p>We can use the UV values to look up the value of whatever pixel is at that coordinate in an image. This lookup process is called <strong>sampling</strong>.</p>
-    <p>We could use the U and V values as the x/y position of the pixel in an image. However, there are some drawbacks to this approach. The biggest is that it makes it very difficult to switch images if they are different resolutions.
-        Similarly, consider is if the <em>same</em> image has versions with of resolutions. Many games have multiple sizes of a texture at different sizes, for performance reasons. You can sample smaller textures for models that are further away from the camera.</p>
+    <p>An image that we pull the colors from to "paint" onto a 3D model is called a <strong>texture</strong>.
+    <p>We can use the UV coordinates to look up the value of whatever color is at that coordinate in an image. This lookup process is called <strong>sampling</strong>.</p>
+    <p>We could use the U and V values as the x/y position of the pixel in an image. If we had an image that is 512 pixels wide and 512 pixels tall, if we wanted to get the color of the pixel in the center, we would look for the color of the pixel at position u:256, v:256 in the image. That's basically the long and short of sampling - we just look up a specific color at some location in an image, using the UV coordinates.<p>
+    <p>However, there are some drawbacks to this approach. The biggest is that it makes it very difficult to switch images if they are a different resolution. Let's say I'm remaking Goldeneye N64, and I want to replace the Pierce Brosnan face texture with a new better image - perhaps one of Daniel Craig - but the new image is 2000 pixels wide and 1500 pixels tall. I would have to update all of my UV values! UV values are stored with the model, not the texture. </p>
+    <p>Similarly, consider is if the <em>same</em> image has different versions with different resolutions. Many games have multiple sizes of a texture at different sizes, for performance reasons. You can sample smaller textures for models that are further away from the camera.</p>
     </p>
     <p>We need a way to sample textures, using the UV coordinates, that is independent of the image resolution.</p>
     <p>
-        The solution is percentages. (More accurately, <a href="https://en.wikipedia.org/wiki/Linear_interpolation" target="_blank">interpolation</a>). Instead of U or V being the direct coordinate of the pixel of the texture, it's a percentage along the length or height of the image.
+        The solution is percentages. (And a bit of math called <a href="https://en.wikipedia.org/wiki/Linear_interpolation" target="_blank">interpolation</a>). Instead of U or V being the direct coordinate of the pixel of the texture, it's a percentage along the length or height of the image.
     </p>
     <p>Let zero be the bottom (and left) of the image, and one be the top (and right). With UV coordinates between 0 and 1, we can sample anywhere on the image. So long as are images are the same <strong>aspect ratio</strong>, it's easy to have everything behave as expected.</p>
     <div class="canvasContainer" style="width:300px;height:300px">
@@ -185,25 +186,26 @@
             <text x="3" y="8.5" fill="#664">1</text>
         </svg>
         <canvas id ="textureSampleCanvas3" class="zdog-textureSample" width="300px" height="300px"></canvas>
-
     </div>
-    <br />
 
 
-    <p>This is why textures are <strong>square</strong>. Having a 1:1 <a href="https://en.wikipedia.org/wiki/Aspect_ratio_(image)" target="_blank">aspect ratio</a> prevents the textures from looking squashed or stretched.</p>
+    <p>This is why textures are <strong>square</strong>. Having a 1:1 <a href="https://en.wikipedia.org/wiki/Aspect_ratio_(image)" target="_blank">aspect ratio</a> prevents the textures from looking squashed or stretched. We can freely swap the texture on any model with any other texture, so long as they are square.</p>
     <!-- Screenshots of various textures on 3D models. -->
 
+    <hr />
+    <p>Try this interactive demo of sampling. Hover your cursor over any face in the 3D scene to display it's corresponding UV coordinate, and the sampled color from the texture.</p>
+    <div class="canvasContainer" style="width:600px;height:400px">
+        <iframe src="sketches/babylon/sampleTex.html" scrolling="no" style="width: 600px;height:400px"></iframe>
+    </div>
 
+    <hr />
 
     <h3>
         Wrap Modes
     </h3>
-    <p>What happens when the UV values in the model are less than 0 or larger than 1? The behaviour is called the "wrap mode", and we will cover it elsewhere. For now, let's assume we our coordinates are "appropriately" between 0 and 1.</p>
+    <p>What happens when the UV values in the model are less than 0 or larger than 1? The behaviour is called the "wrap mode", and we will cover it elsewhere. For now, let's assume our coordinates are "appropriately" between 0 and 1.</p>
     <!-- todo: a babylon project where there are a few 3D models, and we can choose different textures and wrap modes for them with the GUI -->
-    <hr />
-    <div class="canvasContainer" style="width:600px;height:400px">
-        <iframe src="sketches/babylon/babylon1.html" scrolling="no" style="width: 600px;height:400px"></iframe>
-    </div>
+
     <hr />
     <h2>Further Reading</h2>
     <ul>
