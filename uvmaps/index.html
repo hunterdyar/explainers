@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>What are UV Maps?</title>
     <link rel="stylesheet" href="../shared/css/cutestrap.min.css">
     <link rel="stylesheet" href="css/multiCanvas.css">
     <style>
@@ -160,19 +160,19 @@
     <p>As you might expect, there are a lot of complications that I am glossing over. See the further reading section below.</p>
 </blockquote>
     <p>However, there are some drawbacks to this approach. The biggest is that it makes it very difficult to switch images if they are a different resolution. Let's say I'm remaking Goldeneye N64, and I want to replace the Pierce Brosnan face texture with a new better image - perhaps one of Daniel Craig - but the new image is 2000 pixels wide and 1500 pixels tall. I would have to update all of my UV values! UV values are stored with the model, not the texture. </p>
-    <p>Similarly, consider is if the <em>same</em> image has different versions with different resolutions. Many games have multiple sizes of a texture at different sizes, for performance reasons. You can sample smaller textures for models that are further away from the camera.</p>
+    <p>Similarly, consider is if the <em>same</em> image has different versions with different resolutions. Many games have multiple sizes of a texture at different sizes, for performance reasons. You can sample smaller textures for models that are further away from the camera. The texture detail wouldn't appear in the final rendered image anyway.</p>
     </p>
     <p>We need a way to sample textures, using the UV coordinates, that is independent of the image resolution.</p>
     <p>
         The solution is percentages. (And a bit of math called <a href="https://en.wikipedia.org/wiki/Linear_interpolation" target="_blank">interpolation</a>). Instead of U or V being the direct coordinate of the pixel of the texture, it's a percentage along the length or height of the image.
     </p>
-    <p>Let zero be the bottom (and left) of the image, and one be the top (and right). With UV coordinates between 0 and 1, we can sample anywhere on the image. So long as are images are the same <strong>aspect ratio</strong>, it's easy to have everything behave as expected.</p>
+    <p>Let zero be the bottom (and left) of the image, and one be the top (and right). With UV coordinates between 0 and 1, we can sample anywhere on the image. So long as we don't swap images out with one of a different <strong>aspect ratio</strong>, everything will behave as expected.</p>
     <div class="canvasContainer" style="width:300px;height:300px">
         <canvas id ="textureSampleCanvas1" class="zdog-textureSample" width="300px" height="300px"></canvas>
     </div>
     <p>
-        With our example point from above, the UV coordinates were u:0.5 and v:0.5. This is the dead center of the UV coordinates.
-        If we "sample" this point, shown in orange on the bottom left, we can apply it to the point, as shown below, right.
+        With our example point from above, the UV coordinates were u: 0.5 and v: 0.5. Conveniently for our example, this is just the center of the image.
+        If we "sample" this point, shown in orange on the bottom left, we can apply it to that point, as shown below, right.
     </p>
     <div class="canvasContainer" style="width:620px;height:300px">
 <!--        <canvas id ="textureSampleCanvas2" class="zdog-textureSample" width="300px" height="300px"></canvas>-->
@@ -197,10 +197,10 @@
         <canvas id ="textureSampleCanvas3" class="zdog-textureSample" width="300px" height="300px"></canvas>
     </div>
 
+    <p>Repeat this sampling process for all the points we need to sample, for all the models we need to sample, and we have our scene.</p>
 
     <p>This is why textures are <strong>square</strong>. Having a 1:1 <a href="https://en.wikipedia.org/wiki/Aspect_ratio_(image)" target="_blank">aspect ratio</a> prevents the textures from looking squashed or stretched. We can freely swap the texture on any model with any other texture, so long as they are square.</p>
-    <!-- Screenshots of various textures on 3D models. -->
-
+    <!-- todo: Screenshots of various textures on the blender monkey and a cube. -->
     <hr />
     <p>Try this interactive demo of sampling. Hover your cursor over any face in the 3D scene to display it's corresponding UV coordinate, and the sampled color from the texture.</p>
     <div class="canvasContainer" style="width:600px;height:400px">
@@ -220,9 +220,6 @@
     </p>
     <h3>Bespoke Textures</h3>
     <blockquote>"Bespoke" isn't an industry term, in practice these would simply be referred to as "textures". When we are in the context of actually using them, there is no need to identify these textures as specific for a model. In practice, they will likely have certain naming convention to match the model they are used with. They may also get saved with or even embedded in the 3D model file. Only in an article like this one, which taking a high level look at textures, is it useful to have some term to separate them from repeating textures. "Bespoke" is apt, because it makes me think of tailors.</blockquote>
-    <p>
-
-    </p>
     <p>
         The game Minecraft has a very simple 3D model for the characters, and it colors the entire model from a single image texture.
     </p>
@@ -251,7 +248,14 @@
     <p>Take a look at any piece of gameplay from <a href="https://www.youtube.com/watch?v=mLyOj_QD4a4" target="_blank">World of Warcraft</a>. WoW uses repeating textures extensively to color its incredibly massive world. In just about any screenshot or gameplay clip you can probably spot a few if you look closely.</p>
     <h3>UV as Color Palettes</h3>
     <p>Another fun approach is to use UV's and texture even when the model uses a solid-color look.</p>
-
+    <h3>Multiple Textures</h3>
+    <p>Just as complicated meshes are made up of many smaller meshes, we can have the shapes sample different textures. On a human model, the face may sample one bespoke image texture, while clothes are sampling a generic or repeating fabric texture that is used throughout the project.</p>
+    <h3>More than just color data</h3>
+    <p>If we look at the <a href="https://polyhaven.com/a/stone_wall" target="_blank">Stone Wall</a> texture from above, you'll notice there are more textures than just the color (often called 'diffuse' or 'albedo') available to use. Once a model has UV maps, we can use them for all sorts of clever reasons. What these other <strong>texture maps</strong> are and what they specifically do is out of scope of this article.</p>
+    <p>Rendering engines have <em>all sorts</em> of settings to fiddle with when simulating how light bounces off of a surface. Some of these 'material properties' are Color, Roughness, Shininess, Transparency, Height Offsets, Bumpiness, Normals, Ambient Occlusion, and light emission. This is not an exhaustive list.</p>
+    <p>These <strong>texture maps</strong> are usually black & white. Color data is stored as 3 or 4 values (red, green, blue, and sometimes transparency) but, for example, roughness is represented as a single value between 0 (smooth) and 1 (rough). Viewed as an image file, it should then be no surprise that it looks black and white.</p>
+    <p>Sometimes multiple maps are stored together in a single image, where occlusion might be the red value of the image, roughness will be the green value of the image, and metalic-ness might be the blue value. These odd textures may be basically meaningless when viewed as RGB images, but none of that matters to the <a href="https://en.wikipedia.org/wiki/Physically_based_rendering" target="_blank">rendering engine</a>, which just wants some number values to use somewhere in its calculations.</p>
+    <p>In software like Unity or Blender, a <strong>material</strong> is stored separate from a 3D model. A material, then, is a collection of rendering settings and texture maps conveniently packaged up. This lets us re-use materials for different models, like with repeating textures.</p>
     <h2>Unwrapping</h2>
     <p>Creating UV coordinates for a 3D model is called <strong>unwrapping</strong> that model. The term is apt, as we often think of textures like wrapping paper around a box, which can be 'unwrapped' from the 3D box and flattened to a piece of paper again.</p>
     <img src="img/santa.jpg" />
@@ -265,6 +269,7 @@
         <li>Blender Manual page on <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/uv/applying_image.html" target="_blank">Using UV Maps</a></li>
         <li><a href="https://www.youtube.com/watch?v=AqscP7rc8_M" target="_blank">Resizing Images</a> by Computerphile on YouTube. Serves as a nice introduction to sampling algorithms.</li>
         <li>Wikipedia: <a href="https://en.wikipedia.org/wiki/Mipmap" target="_blank">Mipmaps</a> </li>
+        <li>The <a href="https://docs.unity3d.com/2020.3/Documentation/Manual/class-TextureImporterOverride.html">Unity Manual</a> page on supported formats for textures.</li>
     </ul>
     <hr />
     <h3>Assets Used</h3>
