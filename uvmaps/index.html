@@ -198,14 +198,46 @@
         <iframe src="sketches/babylon/sampleTex.html" scrolling="no" style="width: 600px;height:400px"></iframe>
     </div>
 
-    <hr />
+    <p>In the real world, we don't sample every single individual point, but each face, but the technical details of interpolation or how "face-corners" are implemented are an unnecessarily deep dive for now.</p>
 
+    <img src="img/adjustingUVs.gif" />
+    <p class="ta-center"><em>Editing a face's UV coordinates visually, in the 3D Modeling software Blender. There's nothing that says UV coordinates cannot overlap. UV's are just numbers they don't know any better.</em></p>
     <h3>
         Wrap Modes
     </h3>
-    <p>What happens when the UV values in the model are less than 0 or larger than 1? The behaviour is called the "wrap mode", and we will cover it elsewhere. For now, let's assume our coordinates are "appropriately" between 0 and 1.</p>
+    <p>What happens when the UV values in the model are less than 0 or larger than 1? The behaviour is called the "wrap mode", and we will cover it elsewhere. For now, let's assume our coordinates are "appropriately" between 0 and 1, and we can easily look up the locations on our texture.</p>
     <!-- todo: a babylon project where there are a few 3D models, and we can choose different textures and wrap modes for them with the GUI -->
+    <h2>Ways to use Textures</h2>
+    <p>
+        Broadly speaking, there are two ways to use textures. Either as a bespoke texture for a specific 3D model, or as a general purpose texture that one could use on a variety of models.
+    </p>
+    <h3>Bespoke Textures</h3>
+    <blockquote>"Bespoke" isn't an industry term, in practice these would simply be referred to as "textures". When we are in the context of actually using them, there is no need to identify these textures as specific for a model. In practice, they will likely have certain naming convention to match the model they are used with. They may also get saved with or even embedded in the 3D model file. Only in an article like this one, which taking a high level look at textures, is it useful to have some term to separate them from repeating textures. "Bespoke" is apt, because it makes me think of tailors.</blockquote>
+    <p>
 
+    </p>
+    <p>
+        The game Minecraft has a very simple 3D model for the characters, and it colors the entire model from a single image texture.
+    </p>
+    <section class="grid" style="--columns: 2;">
+        <img class="img-left" src="img/batman3d.png" />
+        <img class= "img-right" style="width: 100%;height: auto;border:1px black solid" src="img/batman.png" alt="A batman minecraft skin. The image has been scaled up to 640x640 from 64x64." />
+    </section>
+    <p><em>You'll note that a lot of the image is empty. This is wasted space! Minecraft can get away with it, however, because at 64x64 pixels, these are very small images. Not that much file space is actually being wasted, when all is said and done. For games where thousands of 8k images textures can make up the bulk of the games file size, efficient "texture packing" is very important.</em></p>
+    <p>Here's an example from a much higher resolution game:</p>
+    <!-- todo: example of warpy face -->
+    <h3>Repeating Textures</h3>
+    <p>
+        <!--todo: write this-->
+        If you go to a website to get textures for your models, like polyhaven.com or textures.com, you won't see a lot of batman's staring at you. You'll see a lot of ... spheres?
+    </p>
+    <img src="img/polyhavencom.png" />
+    <p class="ta-center"><em>Texture preview images on <a href="https://polyhaven.com/textures" target="_blank">polyhaven.com</a></em></p>
+    <h2>Unwrapping</h2>
+    <p>Creating UV coordinates for a 3D model is called <strong>unwrapping</strong> that model. The term is apt, as we often think of textures like wrapping paper around a box, which can be 'unwrapped' from the 3D box and flattened to a piece of paper again.</p>
+    <img src="img/santa.jpg" />
+    <p>In the example image above, the chocolate would be the 3D model, and the foil the texture. We - quite literally - are able to unwrap it to a 2D shape that can fit onto a texture.</p>
+    <p> </p>
     <hr />
     <h2>Further Reading</h2>
     <ul>
@@ -216,11 +248,14 @@
     <hr />
     <h3>Assets Used</h3>
     <ul>
-        <li> <a href="https://opengameart.org/node/8765" target="_blank">Wood Crate by Luke.RUSTLTD</a>, published CC0 at opengameart.org </li>
-        <li> UV Test grid image generated from <a href="https://www.blender.org/" target="_blank">Blender</a>.</li>
-        <li> Examples created with <a href="https://threejs.org/" target="_blank">ThreeJS</a>, <a href="https://www.babylonjs.com/" target="_blank">Babylon.js</a>, and <a href="https://zzz.dog/" target="_blank">ZDog</a> with <a href="https://github.com/jaames/zfont#installation" target="_blank">zfont</a> plugin.</li>
-        <li> Font in some diagrams is <a href="https://fonts.google.com/specimen/Fredoka+One" target="_blank">Fredoka One</a>. </li>
-        <li> Website created in plain old HTML, with some css from <a href="https://www.cutestrap.com/" target="_blank">cutestrap</a>.</li>
+        <li><a href="https://opengameart.org/node/8765" target="_blank">Wood Crate by Luke.RUSTLTD</a>, published CC0 at opengameart.org </li>
+        <li>UV Test grid image generated from <a href="https://www.blender.org/" target="_blank">Blender</a>.</li>
+        <li>Examples created with <a href="https://threejs.org/" target="_blank">ThreeJS</a>, <a href="https://www.babylonjs.com/" target="_blank">Babylon.js</a>, and <a href="https://zzz.dog/" target="_blank">ZDog</a> with <a href="https://github.com/jaames/zfont#installation" target="_blank">zfont</a> plugin.</li>
+        <li>Font in some diagrams is <a href="https://fonts.google.com/specimen/Fredoka+One" target="_blank">Fredoka One</a>. </li>
+        <li>Minecraft Character 3D model I used in a gif came from a friend, presumably either a direct rip from the game files or one cloned to be the same.</li>
+        <li>The batman minecraft skin was the one on my old minecraft account when I logged in. It appears to be originally created by user <a href="https://www.planetminecraft.com/member/halucid/">halucid</a> from <a href="https://www.planetminecraft.com/skin/batman-100855/" target="_blank">planetminecraft.com</a>.</li>
+        <li>Santa chocolate photo by myself, feel free to use for UV explainers elsewhere. They are <a href="https://www.riegelein.de/en/produkt/minis-weihnachtswichtel-125-g/" target="_blank">Solid Santa Minis</a> from Riegelein Confiserie. I bought them off of amazon and were past their best buy date when they arrived. I don't recommend doing that.</li>
+        <li>Website created in plain old HTML, with some css from <a href="https://www.cutestrap.com/" target="_blank">cutestrap</a>.</li>
     </ul>
 </article>
 
