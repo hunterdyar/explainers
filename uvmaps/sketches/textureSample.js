@@ -29,7 +29,7 @@ image.addEventListener("load", (e) => {
     let sampled = drawLabeledUV('textureSampleCanvas3');
     let point2 = new Zdog.Shape({
         addTo: sampled,
-        stroke: 0.5,
+        stroke: 1,
         color: '#908373',
         translate: {x: 5, y: -5},
     });
@@ -45,7 +45,7 @@ function renderBoth(ctx,arrows) {
 
     let point2 = new Zdog.Shape({
         addTo: anchor,
-        stroke: 0.5,
+        stroke: 1,
         color: '#E62',
         translate: {x: 5, y: -5},
     });

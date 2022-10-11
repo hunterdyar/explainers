@@ -25,10 +25,18 @@
     const texture = new THREE.TextureLoader().load( "textures/crate1_diffuse.png" );
 
     const geometry = new THREE.BoxGeometry( 200, 200, 200 );
-    const material = new THREE.MeshBasicMaterial( { map: texture } );
+    const material = new THREE.MeshPhongMaterial( { specular: 0x000000, flatShading:true, map: texture } );
 
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
+
+    //lights
+    ambientLight = new THREE.AmbientLight( 0x686868 );
+    light = new THREE.DirectionalLight( 0xCCCCCC, 1.0 );
+    light.position.set( 0.32, 0.39, 0.7 );
+    scene.add( ambientLight );
+    scene.add( light );
+
 
     renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
     renderer.setPixelRatio( window.devicePixelRatio );

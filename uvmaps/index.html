@@ -18,6 +18,12 @@
             margin: 0px auto;
             background: #dcf5f3;
         }
+        .imgContainer{
+            display: block;
+            border: 1px green solid;
+            padding: 0px;
+            margin: 0px auto;
+        }
         canvas{
             display: inline-block;
             border: 1px blue solid;
@@ -47,19 +53,15 @@
         <li>Map</li>
         <li>Coordinate</li>
     </ul>
-    <blockquote>This article will slide between the different terms as we define and explore their related concepts... But for simplicity's sake, we will use "UV Maps" to start with.</blockquote>
+    <blockquote>This article will slide between the different terms as we define and explore their related concepts..</blockquote>
     <p>
-    Creating UV Maps is done through a process called <strong>unwrapping</strong> or, depending on the context, <strong>projection</strong>. The specific steps or strategies to do this ("How do I create UV Maps?") is not in the scope of this article. In other words, this is not a software tutorial.
-    </p>
-
-    <p>
-    At the end of this article, we will circle back and define the terms more academically. For now, I am going to call the-subject-of-this-page "UV's".
+    Creating UV Maps is done through a process called <strong>unwrapping</strong> or, depending on the context, <strong>projection</strong>. How to give a model UV coordinates or create textures is not in the scope of this article. In other words, this is not a software tutorial.
     </p>
 
     <h2>Why Do We Need UV's?</h2>
 
     <p>Rendering 3D Graphics is hard. It's really hard! In 3D worlds, large and complex scenes require a lot of detail. Every face, every belt buckle, every crack in the pavement, every button on every jacket needs to be a 3D shape. This is computationally expensive to render out.</p>
-    <p>Enter: Textures. What if we could just slap an image on a 3D model? We could include small details - like jacket buttons - on the image, and stick it on a plain cube. We get to see lots of nice detail, the computer doesn't have as many 3D shapes to render. Everyone wins!</p>
+    <p>Enter: <strong>Textures</strong>. What if we could just slap an image on a 3D model? We could include small details - like jacket buttons - on the image, and stick it on a plain cube. We get to see lots of nice detail, and the computer doesn't have as many 3D shapes to render. Everyone wins!</p>
 
     <!-- todo: Side by side wireframe/texture view of a high detail mesh and a low-detail mesh with subtitles like "Slow and hard for a computer to render" and "fast and easy for computers, so we can have more stuff" -->
 
@@ -110,7 +112,7 @@
         This point has 3 number values, which are positions on number lines in a <a href="https://en.wikipedia.org/wiki/Cartesian_coordinate_system" target="_blank">cartesian coordinate system</a>. Now it's time for the big trick... Let's give the point two more numbers.
     </p>
     <p>
-        The same object - the same little blob of data on our computer - that is storing the numbers "x","y", and "z", we will give it two more numbers to hold on to. These new numbers will also be positions on a number line (ie: in a coordinate system). This new coordinate system will only have two dimensions.
+        The same object - the same little blob of data on our computer - that is storing the numbers "x","y", and "z", we will give it two more numbers to hold on to. These new numbers will also be positions on number lines. This new coordinate system will only have two dimensions.
     </p>
 
     <p>
@@ -119,6 +121,10 @@
     <p>
         That's right, The "UV" in UV Maps doesn't stand for anything. UV isn't an acronym. U and V are just the next arbitrary letters that we use to label axes in a coordinate system.
     </p>
+    <div class="imgContainer" style="width:480px;">
+    <img src="img/searchweekend.gif" />
+    <p class="ta-center"><em>Mathematicians searching for more letters to give arbitrary meaning to.</em></p>
+    </div>
     <blockquote><p>
         Calling uv maps "UV's" is a lot like calling 3D spaces "XYZ's". XYZ's is somewhat stupid sounding, and clumsy to say - but UV rolls off the tongue. Perhaps UV is also kind of a silly name. Regardless, we're all used to it.
         </p>
@@ -149,7 +155,10 @@
     <h2>Sampling Textures</h2>
     <p>An image that we pull the colors from to "paint" onto a 3D model is called a <strong>texture</strong>.
     <p>We can use the UV coordinates to look up the value of whatever color is at that coordinate in an image. This lookup process is called <strong>sampling</strong>.</p>
-    <p>We could use the U and V values as the x/y position of the pixel in an image. If we had an image that is 512 pixels wide and 512 pixels tall, if we wanted to get the color of the pixel in the center, we would look for the color of the pixel at position u:256, v:256 in the image. That's basically the long and short of sampling - we just look up a specific color at some location in an image, using the UV coordinates.<p>
+    <p>We could use the U and V values as the x/y position of the pixel in an image. Say we have an image that is 512 pixels wide and 512 pixels tall. If we wanted to get the color of the pixel in the center, we would look for the color of the pixel at position u:256, v:256 in the image. That's basically the long and short of sampling. It's looking up a specific color at some location in an image.<p>
+    <blockquote>
+    <p>As you might expect, there are a lot of complications that I am glossing over. See the further reading section below.</p>
+</blockquote>
     <p>However, there are some drawbacks to this approach. The biggest is that it makes it very difficult to switch images if they are a different resolution. Let's say I'm remaking Goldeneye N64, and I want to replace the Pierce Brosnan face texture with a new better image - perhaps one of Daniel Craig - but the new image is 2000 pixels wide and 1500 pixels tall. I would have to update all of my UV values! UV values are stored with the model, not the texture. </p>
     <p>Similarly, consider is if the <em>same</em> image has different versions with different resolutions. Many games have multiple sizes of a texture at different sizes, for performance reasons. You can sample smaller textures for models that are further away from the camera.</p>
     </p>
@@ -162,7 +171,7 @@
         <canvas id ="textureSampleCanvas1" class="zdog-textureSample" width="300px" height="300px"></canvas>
     </div>
     <p>
-        With our example point from above, the UV coordiantes were u:0.5 and v:0.5. This is the dead center of the UV coordinates.
+        With our example point from above, the UV coordinates were u:0.5 and v:0.5. This is the dead center of the UV coordinates.
         If we "sample" this point, shown in orange on the bottom left, we can apply it to the point, as shown below, right.
     </p>
     <div class="canvasContainer" style="width:620px;height:300px">
@@ -181,9 +190,9 @@
             <image href="sketches/textures/crate1_diffuse.png" x="-5" y ="-5" height="10" width="10" />
 
             <text x="-8" y="5.5" fill="#466">0</text>
-            <text x="-8" y="-3" fill="#466">1</text>
-            <text x="-5" y="8.5" fill="#664">0</text>
-            <text x="3" y="8.5" fill="#664">1</text>
+            <text x="-8" y="-4.3" fill="#466">1</text>
+            <text x="-5.5" y="8.1" fill="#664">0</text>
+            <text x="4.3" y="8.1" fill="#664">1</text>
         </svg>
         <canvas id ="textureSampleCanvas3" class="zdog-textureSample" width="300px" height="300px"></canvas>
     </div>
@@ -196,16 +205,14 @@
     <p>Try this interactive demo of sampling. Hover your cursor over any face in the 3D scene to display it's corresponding UV coordinate, and the sampled color from the texture.</p>
     <div class="canvasContainer" style="width:600px;height:400px">
         <iframe src="sketches/babylon/sampleTex.html" scrolling="no" style="width: 600px;height:400px"></iframe>
-    </div>
-
-    <p>In the real world, we don't sample every single individual point, but each face, but the technical details of interpolation or how "face-corners" are implemented are an unnecessarily deep dive for now.</p>
+    </div><br />
 
     <img src="img/adjustingUVs.gif" />
-    <p class="ta-center"><em>Editing a face's UV coordinates visually, in the 3D Modeling software Blender. There's nothing that says UV coordinates cannot overlap. UV's are just numbers they don't know any better.</em></p>
+    <p class="ta-center"><em>Editing a face's UV coordinates visually, in the 3D modeling software Blender. There's nothing that says UV coordinates cannot overlap - we often use the same part of a texture for multiple parts on a model. UV's are just numbers, they don't know any better.</em></p>
     <h3>
         Wrap Modes
     </h3>
-    <p>What happens when the UV values in the model are less than 0 or larger than 1? The behaviour is called the "wrap mode", and we will cover it elsewhere. For now, let's assume our coordinates are "appropriately" between 0 and 1, and we can easily look up the locations on our texture.</p>
+    <p>What happens when the UV values in the model are less than 0 or larger than 1? The behaviour for handling this situation is called the "wrap mode". We will cover it elsewhere. For now, let's assume our coordinates are "appropriately" between 0 and 1, and we can easily look up the locations on our texture.</p>
     <!-- todo: a babylon project where there are a few 3D models, and we can choose different textures and wrap modes for them with the GUI -->
     <h2>Ways to use Textures</h2>
     <p>
@@ -233,16 +240,30 @@
     </p>
     <img src="img/polyhavencom.png" />
     <p class="ta-center"><em>Texture preview images on <a href="https://polyhaven.com/textures" target="_blank">polyhaven.com</a></em></p>
+
+    <p>These are repeating textures. They are images that can be tiled next to each other in a repeating pattern, and there won't be any obvious seams.</p>
+
+    <img src="img/stoneWallRepeating.png" />
+    <p class="ta-center"><a href="https://polyhaven.com/a/stone_wall" target="_blank">Stone Wall</a> diffuse texture map, repeated.</p>
+    <p>If we zoom out, we can see the repetition of the texture. Repeating textures are incredibly useful! Without them, we might need a <em>ridiculous</em> amount images to fully cover my roads in concrete, my walls with stone, my houses with bricks, and my grass with... grass. Thanks to  repeating textures, I can paint my entire world while using far fewer images.</p>
+    <blockquote><p>All that stuff basically looks the same anyway. and once you add in-scene lighting, it can be near-impossible to tell</p></blockquote>
+    <p>Repeating textures, can be created and used independently of the 3D model. Many 3D artists and game developers slowly collect a personal "material library" of assets as they create or acquire them, full of useful textures that they can reuse between projects.</p>
+    <p>Take a look at any piece of gameplay from <a href="https://www.youtube.com/watch?v=mLyOj_QD4a4" target="_blank">World of Warcraft</a>. WoW uses repeating textures extensively to color its incredibly massive world. In just about any screenshot or gameplay clip you can probably spot a few if you look closely.</p>
+    <h3>UV as Color Palettes</h3>
+    <p>Another fun approach is to use UV's and texture even when the model uses a solid-color look.</p>
+
     <h2>Unwrapping</h2>
     <p>Creating UV coordinates for a 3D model is called <strong>unwrapping</strong> that model. The term is apt, as we often think of textures like wrapping paper around a box, which can be 'unwrapped' from the 3D box and flattened to a piece of paper again.</p>
     <img src="img/santa.jpg" />
     <p>In the example image above, the chocolate would be the 3D model, and the foil the texture. We - quite literally - are able to unwrap it to a 2D shape that can fit onto a texture.</p>
+
     <p> </p>
     <hr />
     <h2>Further Reading</h2>
     <ul>
-        <li>The Changing Shape of Cinema: The History of Aspect Ratio. <a href="https://www.youtube.com/watch?v=3CgrMsjGk7k"target="_blank">On Youtube</a></li>
+        <li>The Changing Shape of Cinema: The History of Aspect Ratio. <a href="https://www.youtube.com/watch?v=3CgrMsjGk7k"target="_blank">by FilmmakerIQ On Youtube</a></li>
         <li>Blender Manual page on <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/uv/applying_image.html" target="_blank">Using UV Maps</a></li>
+        <li><a href="https://www.youtube.com/watch?v=AqscP7rc8_M" target="_blank">Resizing Images</a> by Computerphile on YouTube. Serves as a nice introduction to sampling algorithms.</li>
         <li>Wikipedia: <a href="https://en.wikipedia.org/wiki/Mipmap" target="_blank">Mipmaps</a> </li>
     </ul>
     <hr />
@@ -255,6 +276,7 @@
         <li>Minecraft Character 3D model I used in a gif came from a friend, presumably either a direct rip from the game files or one cloned to be the same.</li>
         <li>The batman minecraft skin was the one on my old minecraft account when I logged in. It appears to be originally created by user <a href="https://www.planetminecraft.com/member/halucid/">halucid</a> from <a href="https://www.planetminecraft.com/skin/batman-100855/" target="_blank">planetminecraft.com</a>.</li>
         <li>Santa chocolate photo by myself, feel free to use for UV explainers elsewhere. They are <a href="https://www.riegelein.de/en/produkt/minis-weihnachtswichtel-125-g/" target="_blank">Solid Santa Minis</a> from Riegelein Confiserie. I bought them off of amazon and were past their best buy date when they arrived. I don't recommend doing that.</li>
+        <li><a href="https://polyhaven.com/a/stone_wall" target="_blank">Stone Wall</a> texture by Charlotte Baglioni and Dario Barresi. Published under CC0 at Polyhaven.com</li>
         <li>Website created in plain old HTML, with some css from <a href="https://www.cutestrap.com/" target="_blank">cutestrap</a>.</li>
     </ul>
 </article>
