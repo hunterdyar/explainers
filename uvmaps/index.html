@@ -13,20 +13,20 @@
         }
         .canvasContainer{
             display: block;
-            border: 1px red solid;
+            border: 0px red solid;
             padding: 0px;
             margin: 0px auto;
             background: #dcf5f3;
         }
         .imgContainer{
             display: block;
-            border: 1px green solid;
+            border: 0px green solid;
             padding: 0px;
             margin: 0px auto;
         }
         canvas{
             display: inline-block;
-            border: 1px blue solid;
+            border: 0px blue solid;
             padding: 0 0 0 0;
         }
         .withBG{
@@ -96,6 +96,15 @@
     <p>
         How do we do that?
     </p>
+    <div class="imgContainer, grid" style="--columns: 3">
+        <img src="img/b_brick.png" style="padding-bottom: 5px;"/>
+        <img src="img/b_fabric.png" style="padding-bottom: 5px;"/>
+        <img src="img/b_grass.png" style="padding-bottom: 5px;"/>
+        <img src="img/b_uv.png" />
+        <img src="img/b_sphere.png" />
+        <img src="img/b_plank.png" />
+    </div>
+    <p class="ta-center"><em>The same scene rendered with different image textures.</em></p>
     <hr />
     <h2>Introducing UVs</h2>
     <p>Let's start with a single point in space.</p>
@@ -160,6 +169,8 @@
     <p>As you might expect, there are a lot of complications that I am glossing over. See the further reading section below.</p>
 </blockquote>
     <p>However, there are some drawbacks to this approach. The biggest is that it makes it very difficult to switch images if they are a different resolution. Let's say I'm remaking Goldeneye N64, and I want to replace the Pierce Brosnan face texture with a new better image - perhaps one of Daniel Craig - but the new image is 2000 pixels wide and 1500 pixels tall. I would have to update all of my UV values! UV values are stored with the model, not the texture. </p>
+    <img src="img/widecraig.png" alt="A non-square image of daniel craig randomly applied to some meshes. The texture appears distorted." />
+    <p class="ta-center"><em>Non-square images can lead to the images being distorted. Daniel Craig is not actually this wide.</em></em>
     <p>Similarly, consider is if the <em>same</em> image has different versions with different resolutions. Many games have multiple sizes of a texture at different sizes, for performance reasons. You can sample smaller textures for models that are further away from the camera. The texture detail wouldn't appear in the final rendered image anyway.</p>
     </p>
     <p>We need a way to sample textures, using the UV coordinates, that is independent of the image resolution.</p>
@@ -245,28 +256,70 @@
     <p>If we zoom out, we can see the repetition of the texture. Repeating textures are incredibly useful! Without them, we might need a <em>ridiculous</em> amount images to fully cover my roads in concrete, my walls with stone, my houses with bricks, and my grass with... grass. Thanks to  repeating textures, I can paint my entire world while using far fewer images.</p>
     <blockquote><p>All that stuff basically looks the same anyway. and once you add in-scene lighting, it can be near-impossible to tell</p></blockquote>
     <p>Repeating textures, can be created and used independently of the 3D model. Many 3D artists and game developers slowly collect a personal "material library" of assets as they create or acquire them, full of useful textures that they can reuse between projects.</p>
-    <p>Take a look at any piece of gameplay from <a href="https://www.youtube.com/watch?v=mLyOj_QD4a4" target="_blank">World of Warcraft</a>. WoW uses repeating textures extensively to color its incredibly massive world. In just about any screenshot or gameplay clip you can probably spot a few if you look closely.</p>
+    <p>Take a look at any piece of gameplay from <a href="https://www.youtube.com/watch?v=mLyOj_QD4a4" target="_blank">World of Warcraft</a>. World of Warcraft uses repeating textures extensively to color its incredibly massive world. In just about any screenshot or gameplay clip you can probably spot a few if you look closely.</p>
+
     <h3>UV as Color Palettes</h3>
     <p>Another fun approach is to use UV's and texture even when the model uses a solid-color look.</p>
+    <p><a href="https://www.youtube.com/watch?v=ZTwCWbV-QGE">This Video</a> explains one way to do this process in Blender, and <a href="https://www.youtube.com/watch?v=-9cuTjOBbiM">this video</a> explains an approach that uses Blender into Unity. Most artists I know do things a little differently than these videos.</p>
+
     <h3>Multiple Textures</h3>
     <p>Just as complicated meshes are made up of many smaller meshes, we can have the shapes sample different textures. On a human model, the face may sample one bespoke image texture, while clothes are sampling a generic or repeating fabric texture that is used throughout the project.</p>
     <h3>More than just color data</h3>
     <p>If we look at the <a href="https://polyhaven.com/a/stone_wall" target="_blank">Stone Wall</a> texture from above, you'll notice there are more textures than just the color (often called 'diffuse' or 'albedo') available to use. Once a model has UV maps, we can use them for all sorts of clever reasons. What these other <strong>texture maps</strong> are and what they specifically do is out of scope of this article.</p>
     <p>Rendering engines have <em>all sorts</em> of settings to fiddle with when simulating how light bounces off of a surface. Some of these 'material properties' are Color, Roughness, Shininess, Transparency, Height Offsets, Bumpiness, Normals, Ambient Occlusion, and light emission. This is not an exhaustive list.</p>
     <p>These <strong>texture maps</strong> are usually black & white. Color data is stored as 3 or 4 values (red, green, blue, and sometimes transparency) but, for example, roughness is represented as a single value between 0 (smooth) and 1 (rough). Viewed as an image file, it should then be no surprise that it looks black and white.</p>
-    <p>Sometimes multiple maps are stored together in a single image, where occlusion might be the red value of the image, roughness will be the green value of the image, and metalic-ness might be the blue value. These odd textures may be basically meaningless when viewed as RGB images, but none of that matters to the <a href="https://en.wikipedia.org/wiki/Physically_based_rendering" target="_blank">rendering engine</a>, which just wants some number values to use somewhere in its calculations.</p>
-    <p>In software like Unity or Blender, a <strong>material</strong> is stored separate from a 3D model. A material, then, is a collection of rendering settings and texture maps conveniently packaged up. This lets us re-use materials for different models, like with repeating textures.</p>
+    <div class="imgContainer, grid" width="600px" style="--columns: 3;">
+        <img src="img/stone_wall_rough_512.jpg" alt="Roughness map of a stone wall texture" />
+        <img src="img/stone_wall_ao_512.jpg" alt="Ambient Occlusion map of a stone wall texture."/>
+        <img src="img/stone_wall_disp_512.jpg" alt="Ambient Occlusion map of a stone wall texture."/>
+        <p class="ta-center">Roughness</p>
+        <p class="ta-center">Ambient Occlusion</p>
+        <p class="ta-center">Displacement</p>
+    </div>
+    <p>Sometimes multiple maps are stored together in a single image, where occlusion might be the red value of the image, roughness will be the green value of the image, and metallic-ness might be the blue value. These odd textures may be basically meaningless when viewed as RGB images, but none of that matters to the <a href="https://en.wikipedia.org/wiki/Physically_based_rendering" target="_blank">rendering engine</a>, which just wants some number values to use somewhere in its calculations. Other times the R,G and B values are all used, but their represent something other than color. Normal maps use the RGB coordinates as directions defined as an XYZ value (an arrow pointing from 0,0,0 to some xyz point)</p>
+    <div class="imgContainer, grid" width="600px" style="--columns: 3;">
+        <img src="img/stone_wall_arm_512.jpg" alt="ARM map of a stone wall texture."/>
+        <img src="img/stone_wall_nor_gl_512.jpg" alt="Normal map of a stone wall texture" />
+        <img src="img/stone_wall_diff_512.jpg" alt="Diffusion map of a stone wall texture."/>
+        <p class="ta-center">An "ARM" ambient-roughness-metallic map. Not very meaningful to the human eye.</p>
+        <p class="ta-center">A "Normal" or "Bump" map. The normal vector of a flat surface (x:0,y:0,z:1) is forward. Stored as the color value (r:0,g:0,b:1), blue. <br /> This is why the mostly-flat parts of the normal map are mostly blue.</p>
+        <p class="ta-center">"Color" is perceived, so can call them color, we also call them "Base Map", "Base Color", "Diffuse" (as in neutral lighting conditions) or "<a href="https://en.wikipedia.org/wiki/Albedo" target="_blank">Albedo</a>" (a measure of reflectivity).</p>
+    </div>
+    <h3>Materials</h3>
+    <p>In software like Unity, Blender, or Unreal a <strong>material</strong> is the collected settings of all this surface rendering data - it tells the model which images to use. It's stored separately from a 3D model. A material, then, is a collection of rendering settings and texture maps conveniently packaged up. This lets us re-use materials for different models, like with repeating textures.</p>
+    <p>While software can differ wildly, one will notice commonalities. For example, assigning images as texture maps to be sampled by the rendering engine. Even though Blender, Unreal Engine, and Unity all have very different UIs, they are all able to assign image textures to various material properties.</p>
+    <div class="imgContainer, grid" width="600px" style="--columns: 3;">
+        <img src="img/blenderMatEdit.png" alt="Material selection window in Blender"/>
+        <img src="img/unityMatInspector.png" alt="Screenshot of Unity Inspector window with a material selected." />
+        <img src="img/unrealMatNodes.jpg" alt="Diffusion map of a stone wall texture."/>
+        <p class="ta-center">A material editor In Blender, with various image textures being assigned to their respective properties.</p>
+        <p class="ta-center">Unity Material inspector. Textures are assigned to various "map" properties.</p>
+        <p class="ta-center">Unreal Engines Material editor. Various texture maps or numeric values have been assigned in a node tree.</p>
+    </div>
+    <p><em>Note, like Blender and Unreal, Unity also has a visual node-based editor, called <a href="https://blog.unity.com/technology/introduction-to-shader-graph-build-your-shaders-with-a-visual-editor">Shader Graph</a>.</em></p>
     <h2>Unwrapping</h2>
     <p>Creating UV coordinates for a 3D model is called <strong>unwrapping</strong> that model. The term is apt, as we often think of textures like wrapping paper around a box, which can be 'unwrapped' from the 3D box and flattened to a piece of paper again.</p>
 
+    <p>Remember, UV Coordinates data is part of a 3D mesh file. UVs are just the coordinate values. The images being sampled are independent, usually stored as separate files, and can be swapped around.</p>
+
     <img src="img/santa.jpg" />
     <p>In the example image above, the chocolate would be the 3D model, and the foil the texture. We - quite literally - are able to unwrap it to a 2D shape that can fit onto a texture.</p>
-
-    <p> </p>
+    <p>As mentioned before, how to unwrap a model will not be covered here.</p>
     <hr />
+    <h2>Vocab Reassessment</h2>
+    <p>As mentioned above, the jargon around UVs are frustratingly flexible. A range of processes and techniques can all get bundled under the same few terms.</p>
+    <ul>
+        <li><strong>UV</strong> - The 2D texture coordinate data stored with the mesh as numerical values, labeled "u" and "v" for the x and y coordinates of an image.</li>
+        <li><strong>Texture</strong> - An image file that contains data (that may or may not be visual/color data). We sample from the texture at the UV coordinates and apply the data to our model appropriately</li>
+        <li><strong>Map</strong> - A connection between coordinate systems that allow us to locate the same elements in both 3D xyz space and 2D uv space. Image files are often called "image maps" or "texture maps", as 2D paper representations of 3D geographic spaces are called maps.</li>
+        <li><strong>Coordinate</strong> - The specific location in 2D (or 3D) space. In context, refers to the literal UV values stored with the model, and not the textures. </li>
+    </ul>
+    <blockquote>
+    <p>For what it's worth, I do prefer the term "Texture Coordinates" over "UV Maps". As an educator, I appreciate having more self-defining vocabulary that requires less context to interpret.</p>
+    </blockquote>
     <h2>Further Reading</h2>
     <ul>
-        <li>The Changing Shape of Cinema: The History of Aspect Ratio. <a href="https://www.youtube.com/watch?v=3CgrMsjGk7k"target="_blank">by FilmmakerIQ On Youtube</a></li>
+        <li><a href="https://www.youtube.com/watch?v=3CgrMsjGk7k" target="_blank">The Changing Shape of Cinema: The History of Aspect Ratio</a> by FilmmakerIQ On Youtube.</li>
         <li>Blender Manual page on <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/uv/applying_image.html" target="_blank">Using UV Maps</a></li>
         <li><a href="https://www.youtube.com/watch?v=AqscP7rc8_M" target="_blank">Resizing Images</a> by Computerphile on YouTube. Serves as a nice introduction to sampling algorithms.</li>
         <li>Wikipedia: <a href="https://en.wikipedia.org/wiki/Mipmap" target="_blank">Mipmaps</a> </li>
