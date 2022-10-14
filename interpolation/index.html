@@ -4,6 +4,44 @@
     <meta charset="UTF-8">
     <title>Interpolation</title>
     <link rel="stylesheet" href="../shared/css/cutestrap.min.css">
+    <script src="https://cdn.rawgit.com/nodebox/g.js/master/dist/g.min.js"></script>
+    <style>
+
+        .slidecontainer {
+            width: 100%; /* Width of the outside container */
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 0px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 40px;
+            height: 30px;
+            border-radius: 100%;
+            background: #444444;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 100%;
+            background: #444444;
+            cursor: pointer;
+        }
+    </style>
+
 </head>
 <body>
 <article class="wrapper -thin">
@@ -16,6 +54,52 @@
         <em>A Pixel is Not a Little Square, a Pixel is Not a Little Square, a Pixel is Not a Little Square! (And a Voxel is Not a Little Cube)<br />
         </em>a 'digital memo' by <a href="http://alvyray.com/Memos/MemosCG.htm#PixelIsNotSquare">Alvyray</a>. <a href="http://alvyray.com/Memos/CG/Microsoft/6_pixel.pdf">Direct link to PDF</a>.
     </p>
+    <hr />
+    <canvas id="c" width="600" height="400"></canvas>
+    <div class="slidecontainer">
+        <input type="range" min="0" max="100" value="50" class="slider" id="range1">
+        <p>value: <span id="valueLabel">0</span></p>
+    </div>
 </article>
+
+<script>
+
+    var c = document.getElementById('c');
+    var input = document.getElementById('valueLabel');
+    var ctx = c.getContext('2d');
+    ctx.translate(c.width / 2, c.height / 2);
+    var slider = document.getElementById("range1");
+
+    function clear()
+    {
+        // Store the current transformation matrix
+        ctx.save();
+        // Use the identity matrix while clearing the canvas
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+        // Restore the transform
+        ctx.restore();
+    }
+    function draw(){
+        // ctx.clear();
+        var t = slider.value/100;//0 to 1
+        input.innerText = t;
+        clear();
+        var w = 5;
+        var path = g.ellipse(t*300-150, 0, 100, 100);
+        path = g.colorize(path,'indigo','black',0);
+        path.draw(ctx);
+        lerp = slider.value; // Display the default slider value
+    }
+
+    draw()
+
+    // Update the current slider value (each time you drag the slider handle)
+    slider.oninput = function() {
+        lerp = this.value;
+        draw();
+    }
+</script>
 </body>
 </html>
