@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Perspective Distortion</title>
+    <link rel="stylesheet" href="../shared/css/cutestrap.min.css">
+    <script src="/shared/js/three.js"></script>
+    <script src="/shared/js/rough/rough.js"></script>
+    <style>
+        .slidecontainer{
+            width: 100%;
+        }
+        .slider {
+            -webkit-appearance: none;
+            width: 658px;
+            height: 0;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 100%;
+            background: #444444;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 100%;
+            background: #444444;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+<body>
+<article class="wrapper -thin">
+    <h1>Perspective Distortion</h1>
+    <p>Perspective, or why lenses don't compress things.</p>
+    <hr />
+
+ <p>Explore the toy below. Change the distance such that two objects are aligned in the 2D final camera image. Then adjusting the field of view (FOV) (AKA zooming in or out). Note how the alignment doesn't change.</p>
+    <canvas id="demo2" width="688px" height="400px"></canvas>
+    <div class="sketch">
+        <label for="cameraPos">camera position</label>
+        <input type="range" min="50" max="600" value="100" class="slider" id="cameraPos">
+        <label for="subjectPos">subject position</label>
+        <input type="range" min="0" max="550" value="50" class="slider" id="subjectPos">
+    </div>
+    <h5>Background is <span id="divisions">0</span> camera-subject units away.</h5>
+    <h5>Background will appear <span id="scaleFactor">0</span> times as tall as the subject.</h5>
+    <h5>Background will take <span id="scaleFactorSquare">0</span> times the area as the subject.</h5>
+</article>
+
+<script>
+
+    const canvasElement = document.getElementById('demo2');
+    const demo2 = rough.canvas(canvasElement);
+    const divisionsLabel = document.getElementById('divisions');
+    const scaleLabel = document.getElementById('scaleFactor');
+    const scaleLabelSquare = document.getElementById('scaleFactorSquare');
+
+    var cameraSlider = document.getElementById("cameraPos");
+    var subjectSlider = document.getElementById("subjectPos");
+
+    let middleY = demo2.canvas.height/2;
+    let x = 5;
+    function draw()
+    {
+        let x = Number(cameraSlider.value);
+        demo2.ctx.clearRect(0, 0, demo2.canvas.width, demo2.canvas.height);
+        camera = {};
+        camera.height = 50;
+        camera.x = x;
+        camera.y = middleY - camera.height-2;
+        camera.center = {};
+        camera.center.x = camera.x + (camera.height*0.75)/2;
+        camera.center.y = camera.y+camera.height/2;
+
+        subjectSlider.min = x-25;
+        // subjectSlider.max = 600;
+        let sPos = Number(subjectSlider.value);
+        // sPos = 300;
+
+        let subject ={};
+        subject.x = sPos+camera.height;
+        subject.y = camera.center.y;
+        // cameraSlider.max = sPos-10;
+
+        let background = {};
+        background.x = 600+camera.height;
+        background.y = camera.center.y + 50;
+
+        //camera
+        demo2.rectangle(camera.x,camera.y,camera.height*0.75,camera.height,{
+            fill: 'grey'
+        });
+        demo2.circle(camera.center.x+6,camera.center.y,20,{
+            fill: 'black',
+            hachureAngle: 40
+        })
+
+        demo2.line(camera.center.x,camera.center.y,subject.x,subject.y);
+        let cameraSubjectDistance = subject.x - camera.center.x;
+        let cameraBackgroundDistance = background.x - camera.center.x;
+        let divisions = cameraBackgroundDistance / cameraSubjectDistance;
+
+        for(let i = 0;i<divisions;i++)
+        {
+            let lx = (i * cameraSubjectDistance) + camera.center.x;
+            demo2.line(lx,background.y-10,lx,background.y+10);
+        }
+
+        demo2.line(camera.center.x,background.y,background.x,background.y);
+        demo2.circle(subject.x,subject.y,50,{
+            fill: 'blue',
+            hachureAngle: 31
+        })
+        demo2.circle(background.x,background.y,50,{
+            fill: 'green',
+            hachureAngle: 60, // angle of hachure,
+            hachureGap: 1
+        })
+
+        //labels
+        divisionsLabel.innerText = ""+Math.round(divisions*1000)/1000;//cast
+        //scaleFactor
+        scaleLabel.innerText = Math.round(1000/(divisions))/1000;
+        let area = Math.round(1000/(divisions*divisions))/1000;
+        if(area < 0.001)
+        {
+            scaleLabelSquare.innerText = "<.001";
+        }else{
+            scaleLabelSquare.innerText = area;
+        }
+
+    }
+
+    cameraSlider.oninput = function() {
+        draw();
+    }
+    subjectSlider.oninput = function() {
+        draw();
+    }
+
+    draw();
+
+    ///
+    var fovSlide = document.getElementById("fovSlider");
+    var dollSlide = document.getElementById("dollySlider");
+
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(90, 688 / 400, 0.1, 1000);
+
+    //var renderer = new THREE.WebGLRenderer();
+    var renderer = new THREE.WebGLRenderer( { canvas: demo1 } );
+    renderer.setSize(688, 400);
+    //document.body.appendChild(renderer.domElement);
+
+    const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 , wireframe: true }  );
+    const cube = new THREE.Mesh( geometry, material );
+    scene.add( cube );
+
+    const geometry2 = new THREE.BoxGeometry( 1, 1, 1 );
+    const material2 = new THREE.MeshBasicMaterial( { color: 0xff0000 , wireframe: true } );
+    const cube2 = new THREE.Mesh( geometry2, material2 );
+    cube2.position.x = -2
+    cube2.position.z = 2;
+    scene.add( cube2 );
+
+    const geometry3 = new THREE.BoxGeometry( 1, 1, 1 );
+    const material3 = new THREE.MeshBasicMaterial( { color: 0x0000ff , wireframe: true }  );
+    const cube3 = new THREE.Mesh( geometry3, material3 );
+    cube3.position.x = 2;
+    cube2.position.z = -2;
+
+
+    const mesh = new THREE.Mesh( new THREE.PlaneGeometry( 10 , 10 ), new THREE.MeshBasicMaterial( { color: 0x999999, wireframe: true } ) );
+    mesh.rotation.x = - Math.PI / 2;
+    mesh.receiveShadow = true;
+    mesh.position.y = -0.5;
+    scene.add( mesh );
+
+    scene.add( cube3 );
+
+    camera.position.z = dollSlide.value;
+    var render = function() {
+        requestAnimationFrame(render);
+        camera.fov = fovSlide.value;
+        camera.updateProjectionMatrix();
+        camera.position.z = dollSlide.value/10 + 0.61;//+6 to stay outside of cube at 0,0,0
+        renderer.render(scene, camera);
+    };
+
+    render();
+
+    // Update the current slider value (each time you drag the slider handle)
+    fovSlide.oninput = function() {
+        camera.fov = this.value;
+        // render();
+    }
+</script>
+</body>
+</html>
