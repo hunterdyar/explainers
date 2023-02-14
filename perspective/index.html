@@ -5,6 +5,8 @@
   <title>Perspective Distortion</title>
   <link rel="stylesheet" href="../shared/css/cutestrap.min.css">
   <script src="/shared/js/three.js"></script>
+  <script src="/shared/js/rough/rough.js"></script>
+
   <style>
     .slidecontainer{
       width: 100%;
@@ -78,19 +80,129 @@
   <p>Measure your world in units of camera-to-subject distances. By definition, your subject is one camera-subject-distance unit away. How far away is the background?</p>
   <p>Because of perspective, the size (in the resulting 2D image) of an object is determined by its distance to the camera. I don't keep a tape measure with in my camera bag, because everything is just relative.</p>
   <p>If you want to make a hypothetical statue in the background larger, compared to the subject, then you need to make it closer... in terms of camera-subject distances. The easiest way to do this - far easier than moving the statue of liberty - is to step back away from your subject and zoom in.</p>
+
+  <canvas id="demo2" width="688px" height="200px"></canvas>
+  <div class="sketch">
+    <label for="cameraPos">Camera Position</label>
+    <input type="range" min="50" max="600" value="100" class="slider" id="cameraPos">
+    <label for="subjectPos">Subject Position</label>
+    <input type="range" min="0" max="550" value="50" class="slider" id="subjectPos">
+  </div>
+  <h5>Background is <span id="divisions">0</span> camera-subject units away.</h5>
+  <h5>Background will appear <span id="scaleFactor">0</span> times as tall as the subject.</h5>
+  <h5>Background will take <span id="scaleFactorSquare">0</span> times the area as the subject.</h5>
+<p><em>These numbers, despite their precision, are only loose estimates.</em></p>
   <p>The statue of liberty, which was thousands of camera-subject distances away (when the camera is at arms-length) is now much closer, maybe only 100 camera-subject units away, thanks to you merely stepping back 10 feet.</p>
-  <p>100:1 is a much smaller ratio than 5000:1, and the statue of liberty just got 50* times larger. We decreased the camera-background distance when described in camera-subject units.</p>
+  <p>100:1 is a much smaller ratio than 5000:1, and the statue of liberty just got 50 times larger. We decreased the camera-background distance when described in camera-subject units.</p>
   <p><em>Not actually 50 times larger. We could <a href="https://sizecalc.com/" target="_blank">do the math</a>, but I don't want you to think that that matters. Remember, it's all relative.</em></p>
   <p>The further away we are, the closer everything is to being about the same distance away from the camera, with the extreme being an <a href="https://guidebook.hdyar.com/docs/digital-media-fundamentals/perspective-distortion-and-projections/" target="_blank>">orthographic</a> camera, where the distance away from the camera has no effect on the perceived size of the object in the frame.</p>
+  <hr />
+  <iframe width="688" height="400" src="https://www.youtube.com/embed/kpRqgPDdCVc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </article>
 
 <script>
+  //// Demo 2
+  const canvasElement = document.getElementById('demo2');
+  const demo2 = rough.canvas(canvasElement);
+  const divisionsLabel = document.getElementById('divisions');
+  const scaleLabel = document.getElementById('scaleFactor');
+  const scaleLabelSquare = document.getElementById('scaleFactorSquare');
+
+  var cameraSlider = document.getElementById("cameraPos");
+  var subjectSlider = document.getElementById("subjectPos");
+
+  let middleY = demo2.canvas.height/2;
+  let x = 5;
+  function draw()
+  {
+    let x = Number(cameraSlider.value);
+    demo2.ctx.clearRect(0, 0, demo2.canvas.width, demo2.canvas.height);
+    camera = {};
+    camera.size = 50;
+    camera.x = x;
+    camera.y = middleY - camera.size-2;
+    camera.center = {};
+    camera.center.x = camera.x + (camera.size*0.75)/2;
+    camera.center.y = camera.y+camera.size/2;
+
+    subjectSlider.min = x-25;
+
+    // subjectSlider.max = 600;
+    let sPos = Number(subjectSlider.value);
+    // sPos = 300;
+
+    let subject ={};
+    subject.x = sPos+camera.size;
+    subject.y = camera.center.y;
+    // cameraSlider.max = sPos-10;
+
+    let background = {};
+    background.x = 600+camera.size;
+    background.y = camera.center.y + 60;
+
+    subjectSlider.max = 600;
+
+    //camera
+    demo2.rectangle(camera.x-6,camera.y+4,camera.size,camera.size*0.7,{
+      fill: 'grey'
+    });
+    demo2.circle(camera.center.x,camera.center.y,20,{
+      fill: 'black',
+      hachureAngle: 40
+    })
+
+    demo2.line(camera.center.x,camera.center.y,subject.x,subject.y);
+    let cameraSubjectDistance = subject.x - camera.center.x;
+    let cameraBackgroundDistance = background.x - camera.center.x;
+    let divisions = cameraBackgroundDistance / cameraSubjectDistance;
+
+    for(let i = 0;i<divisions;i++)
+    {
+      let lx = (i * cameraSubjectDistance) + camera.center.x;
+      demo2.line(lx,background.y-10,lx,background.y+10);
+    }
+
+    demo2.line(camera.center.x,background.y,background.x,background.y);
+    demo2.circle(subject.x,subject.y,50,{
+      fill: 'blue',
+      hachureAngle: 31
+    })
+    demo2.circle(background.x,background.y,50,{
+      fill: 'green',
+      hachureAngle: 60, // angle of hachure,
+      hachureGap: 1
+    })
+
+    //labels
+    divisionsLabel.innerText = ""+Math.round(divisions*1000)/1000;//cast
+    //scaleFactor
+    scaleLabel.innerText = Math.round(1000/(divisions))/1000;
+    let area = Math.round(1000/(divisions*divisions))/1000;
+    if(area < 0.001)
+    {
+      scaleLabelSquare.innerText = "<.001";
+    }else{
+      scaleLabelSquare.innerText = area;
+    }
+
+  }
+
+  cameraSlider.oninput = function() {
+    draw();
+  }
+  subjectSlider.oninput = function() {
+    draw();
+  }
+
+  draw();
+
+  //// Demo 1
   var fovSlide = document.getElementById("fovSlider");
   var dollSlide = document.getElementById("dollySlider");
 
 
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(90, 688 / 400, 0.1, 1000);
+  var camThree = new THREE.PerspectiveCamera(90, 688 / 400, 0.1, 1000);
 
   //var renderer = new THREE.WebGLRenderer();
   var renderer = new THREE.WebGLRenderer( { canvas: demo1 } );
@@ -124,20 +236,20 @@
 
   scene.add( cube3 );
 
-  camera.position.z = dollSlide.value;
+  camThree.position.z = dollSlide.value;
   var render = function() {
     requestAnimationFrame(render);
-    camera.fov = fovSlide.value;
-    camera.updateProjectionMatrix();
-    camera.position.z = dollSlide.value/10 + 0.61;//+6 to stay outside of cube at 0,0,0
-    renderer.render(scene, camera);
+    camThree.fov = fovSlide.value;
+    camThree.updateProjectionMatrix();
+    camThree.position.z = dollSlide.value/10 + 0.61;//+6 to stay outside of cube at 0,0,0
+    renderer.render(scene, camThree);
   };
 
   render();
 
   // Update the current slider value (each time you drag the slider handle)
   fovSlide.oninput = function() {
-    camera.fov = this.value;
+    camThree.fov = this.value;
     // render();
   }
 </script>
