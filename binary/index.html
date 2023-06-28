@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Binary, Hex, and Encoding Numbers</title>
   <link rel="stylesheet" href="../shared/css/cutestrap.min.css">
+  <link rel="stylesheet" href="../shared/css/colorpicker.css">
 <style>
   .tg  {border-collapse:collapse;border-spacing:0;}
   .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:24px;
@@ -19,6 +20,9 @@
   #decimalBinaryCounter{
     margin-top:0;
     color:#777;
+  }
+  #colorpreview{
+    height:150px;
   }
 </style>
 </head>
@@ -151,21 +155,80 @@
   <p>It's time for hexadecimal!</p>
   <p>Hexadecimal is base 16, (decimal is base 10, and binary is base 2). It works just the same as the above, each place represents a value 16 times larger than the previous place.</p>
   <p>Frustratingly, Hexadecimal is often abbreviated as "hex". We are referring to hexa<strong>dec</strong>imal, not heximal. Nobody wants base 6. But 16? 16 is great. We love powers of two.</p>
-  <p>Let's use the following 16 symbols: 0 1 2 3 4 5 6 7 8 9 A B C D E F</p>.
+  <p>Let's use the following 16 symbols: 0 1 2 3 4 5 6 7 8 9 A B C D E F</p>
   <p>Yep, we just borrowed from the alphabet. A is 10, B is 11, F is 15.</p>
-  <p>The frustration of Hex - it often looks like decimal numbers - also stems from it's simplicity - we are using well known and well-supported characters.</p>
+  <p>The frustration of Hex - it often looks like decimal numbers - also stems from its simplicity: we are using well known and well-supported characters.</p>
   <form class ="wrapper" style="max-width: 35rem">
     <label class="field">
-      <input id="hex-decimal" type="number" step="1">
+      <input id="hex-decimal" type="number" step="1" value="0">
       <span class="label">Decimal:</span>
     </label>
     <input class="button -block" value="&#8593; Convert &#8595;" />
     <br />
     <label class="field">
-      <input id="hex-hex" type="text">
+      <input id="hex-hex" type="text" value="0">
       <span class="label">Hexadecimal:</span>
     </label>
   </form>
+
+  <hr />
+  <h4>Hexadeximal Properties</h4>
+  <h5>Density</h5>
+  <p>One of the biggest strengths of hex is that, being a higher base, it takes up less space. 8 places (bits) of binary can be encoded neatly into only 2 places of hex.</p>
+  <p>In fact, one of the most common ways we use hexadecimal is to view 8-bit binary data.</p>
+  <p>00 is 00000000 and FF is 11111111. It's much easier to scan and parse a pile of hex than it is a pile of binary. ("Easier" here does not mean "Easy"). At the very least, it's more space-efficient on screen.</p>
+  <img src="images/memoryView.png" />
+  <p><em>The memory view tool in JetBrains CLion debugging a c++ project. It displays 8-bit chunks of RAM as 2-letter hex codes, spaced in 32 bit groups of 4.</em></p>
+  <p><em>The light grey leftmost column is the Memory Address, a 64bit number. Hex is used because having 64 1's and 0's running across the screen would be completely unusable. For one, it would take up too much space!</em></p>
+  <h5>Disambiguation</h5>
+  <p>You may see "0x" prefix. This is a common nomenclature to say "what follows the 0x is a hexidecimal number". In fact, the long numbers on the left in the screenshot above are hex. 0b is used for binary. You might even see 0d for decimal. 42 is 0d42, 0x2a, and 9b00101010. This comes from the C programming language, but it's been adopted many other places as a convenient standard.</p>
+  <h5>HTML Color Codes</h5>
+  <p>HTML Color is defined as a string of six seemingly random color codes, usually preceded by a # sign.</p>
+  <p>They work in a pretty simple way. They are just 3 (8-bit) numbers, each encoded as a 2 digit hexadecimal numbers. They represent the red, green, and blue values of the color in that order (RRGGBB).</p>
+  <p>#000000 is black, because it's 0's across the board. #FFFFFF is the highest possible number, all 255's: white.</p>
+  <form class ="wrapper" style="max-width: 35rem">
+    <section class="grid -medium ta-center" style="--columns: 3;">
+      <label class="field">
+        <input id="col-dec-red" type="number" step="1" min="0" max="255" value="0">
+        <span class="label">Red 0-255:</span>
+      </label>
+
+      <label class="field">
+        <input id="col-dec-green" type="number" step="1" min="0" max="255" value="0">
+        <span class="label">Green 0-255:</span>
+      </label>
+
+      <label class="field">
+        <input id="col-dec-blue" type="number" min="0" max="255" step="1" value="0">
+        <span class="label">Blue 0-255:</span>
+      </label>
+    </section>
+    <section class="grid -medium ta-center" style="--columns: 3;">
+      <label class="field">
+        <input id="col-hex-red" type="text" maxlength="2">
+        <span class="label">Red 0-FF:</span>
+      </label>
+
+      <label class="field">
+        <input id="col-hex-green" type="text" maxlength="2">
+        <span class="label">Green 0-FF:</span>
+      </label>
+
+      <label class="field">
+        <input id="col-hex-blue" type="text" maxlength="2">
+        <span class="label">Blue 0-FF:</span>
+      </label>
+    </section>
+    <section class="grid -medium ta-center" style="--columns: 3;">
+      <input id="col-slide-red" type="range" min="0" max="100" height="20px" class="slider red">
+
+      <input id="col-slide-green" type="range" min="0" max="100" class="slider green">
+
+      <input id="col-slide-blue" type="range" min="0" max="100" class="slider blue">
+    </section>
+  </form>
+  <div id="colorpreview"></div>
+  <h4 id="colorcode" class="ta-center">#000000</h4>
   <hr />
   <h2>Further Reading</h2>
   <ul>
@@ -179,5 +242,6 @@
 </article>
 
 <script src="binary.js"></script>
+<script src="../shared/js/colorpicker.js"></script>
 </body>
 </html>
