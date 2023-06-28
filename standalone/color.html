@@ -4,7 +4,51 @@
     <meta charset="UTF-8">
     <title>HTML Color Codes</title>
   <link rel="stylesheet" href="../shared/css/cutestrap.min.css">
+<style>
 
+    #colorpreview{
+        height:150px;
+    }
+
+    #col-slide-red {
+        background-image: linear-gradient(to right, black , red);
+    }
+    #col-slide-green {
+        background-image: linear-gradient(to right, black , green);
+    }
+    #col-slide-blue {
+        background-image: linear-gradient(to right, black , blue);
+    }
+
+    .slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 0;
+
+        outline: none;
+        opacity: 1;
+    }
+
+
+    /*.slider::-webkit-slider-thumb {*/
+    /*    -webkit-appearance: none;*/
+    /*    appearance: none;*/
+    /*    width: 35px;*/
+    /*    height: 35px;*/
+    /*    border-radius: 100%;*/
+    /*    background: #444444;*/
+    /*    cursor: pointer;*/
+    /*}*/
+
+    /*.slider::-moz-range-thumb {*/
+    /*    width: 40px;*/
+    /*    height: 40px;*/
+    /*    border-radius: 100%;*/
+    /*    background: #444444;*/
+    /*    cursor: pointer;*/
+    /*}*/
+
+</style>
 </head>
 <body>
 <article class="wrapper -thin">
@@ -12,17 +56,17 @@
     <form class ="wrapper" style="max-width: 35rem">
         <section class="grid -medium ta-center" style="--columns: 3;">
             <label class="field">
-                <input id="col-dec-red" type="number" step="1" min="0" max="255">
+                <input id="col-dec-red" type="number" step="1" min="0" max="255" value="0">
                 <span class="label">Red 0-255:</span>
             </label>
 
             <label class="field">
-                <input id="col-dec-green" type="number" step="1" min="0" max="255">
+                <input id="col-dec-green" type="number" step="1" min="0" max="255" value="0">
                 <span class="label">Green 0-255:</span>
             </label>
 
             <label class="field">
-                <input id="col-dec-blue" type="number" min="0" max="255" step="1">
+                <input id="col-dec-blue" type="number" min="0" max="255" step="1" value="0">
                 <span class="label">Blue 0-255:</span>
             </label>
         </section>
@@ -43,31 +87,23 @@
             </label>
         </section>
         <section class="grid -medium ta-center" style="--columns: 3;">
-            <label class="field">
-                <input id="col-slide-red" type="range" min="0" max="100">
-                <span class="label">Red%:</span>
-            </label>
+                <input id="col-slide-red" type="range" min="0" max="100" height="20px" class="slider red">
 
-            <label class="field">
-                <input id="col-slide-green" type="range" min="0" max="100">
-                <span class="label">Green%:</span>
-            </label>
+                    <input id="col-slide-green" type="range" min="0" max="100" class="slider green">
 
-            <label class="field">
-                <input id="col-slide-blue" type="range" min="0" max="100">
-                <span class="label">Blue%:</span>
-            </label>
+                <input id="col-slide-blue" type="range" min="0" max="100" class="slider blue">
         </section>
     </form>
-    <div id="block" width="100px" height="100px">hi</div>
-
+    <div id="colorpreview" width="100px" height="100px"></div>
+    <h4 id="colorcode" class="ta-center">#000000</h4>
 </article>
 </body>
 <script>
 let red = 0;
 let green = 0;
 let blue = 0;
-let block = document.getElementById("block");
+let block = document.getElementById("colorpreview");
+let colorcode = document.getElementById("colorcode");
 
 let coldecred = document.getElementById("col-dec-red");
 let coldecgreen = document.getElementById("col-dec-green");
@@ -103,16 +139,29 @@ colhexblue.onchange = function (){
     updateBlock();
 }
 
-
 let colslidered = document.getElementById("col-slide-red");
 let colslidegreen = document.getElementById("col-slide-green");
 let colslideblue = document.getElementById("col-slide-blue");
+
+colslidered.oninput = function ()
+{
+    slideChange();
+    updateBlock();
+}
 
 colslidered.onchange = function () {
     slideChange();
     updateBlock();
 }
+colslidegreen.oninput = function (){
+    slideChange();
+    updateBlock();
+}
 colslidegreen.onchange = function (){
+    slideChange();
+    updateBlock();
+}
+colslideblue.oninput = function (){
     slideChange();
     updateBlock();
 }
@@ -138,15 +187,56 @@ function decChange()
 }
 function hexChange()
 {
+    red = parseInt(colhexred.value,16);
+    red = Math.round(Math.max( 0, Math.min(red, 255)))
+    colslidered.value = (red/255)*100;
+    coldecred.value = red;
 
+    green = parseInt(colhexred.value,16);
+    green = Math.round(Math.max( 0, Math.min(green, 255)))
+    colslidegreen.value = (green/255)*100;
+    coldecgreen.value = green;
 
+    blue = parseInt(colhexblue.value,16);
+    blue = Math.round(Math.max( 0, Math.min(blue, 255)))
+    colslideblue.value = (blue/255)*100;
+    coldecblue.value = blue;
 }
 function slideChange()
 {
-    console.log(colslideblue.value);
+    red = colslidered.value/100 * 255;
+    red = Math.round(red);
+    colhexred.value = red.toString(16);
+    coldecred.value = red;
+
+    green = colslidegreen.value/100 * 255;
+    green = Math.round(green);
+    colhexgreen.value = green.toString(16);
+    coldecgreen.value = green;
+
+    blue = colslideblue.value/100 * 255;
+    blue = Math.round(blue);
+    colhexblue.value = blue.toString(16);
+    coldecblue.value = blue;
 }
 function updateBlock(){
     block.style.backgroundColor = "rgb("+red+","+green+","+blue+")";
+    var hexred = colhexred.value;
+    if(hexred.length === 1)
+    {
+        hexred = "0"+hexred;
+    }
+    var hexgreen = colhexgreen.value;
+    if(hexgreen.length === 1)
+    {
+        hexgreen = "0"+hexgreen;
+    }
+    var hexblue = colhexblue.value;
+    if(hexblue.length === 1)
+    {
+        hexblue = "0"+hexblue;
+    }
+    colorcode.innerText = "#"+hexred+hexgreen+hexblue;
 }
 
 //remember form entries from previous page laod.

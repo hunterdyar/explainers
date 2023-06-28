@@ -62,7 +62,7 @@ function binaryCounter(delta)
     counterminus.disabled = number===0;
     counterplus.disabled = number===255;//I have not tested this.
     var n = (number >>> 0).toString(2);
-    counter.innerText = "00000000".substr(n.length) + n;
+    counter.innerText = "00000000".substr(n.length) + n;//todo deprecated?
     decCounter.innerText = number;
 }
 
