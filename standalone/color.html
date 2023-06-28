@@ -16,46 +16,53 @@
 
     <form class ="wrapper" style="max-width: 35rem">
         <section class="grid -medium ta-center" style="--columns: 3;">
-            <label class="field">
+            <label class="field red">
                 <input id="col-dec-red" type="number" step="1" min="0" max="255" value="0">
                 <span class="label">Red 0-255:</span>
             </label>
 
-            <label class="field">
+            <label class="field green">
                 <input id="col-dec-green" type="number" step="1" min="0" max="255" value="0">
                 <span class="label">Green 0-255:</span>
             </label>
 
-            <label class="field">
+            <label class="field blue">
                 <input id="col-dec-blue" type="number" min="0" max="255" step="1" value="0">
                 <span class="label">Blue 0-255:</span>
             </label>
         </section>
         <section class="grid -medium ta-center" style="--columns: 3;">
-            <label class="field">
+            <label class="field red">
                 <input id="col-hex-red" type="text" maxlength="2">
                 <span class="label">Red 0-FF:</span>
             </label>
 
-            <label class="field">
+            <label class="field green">
                 <input id="col-hex-green" type="text" maxlength="2">
                 <span class="label">Green 0-FF:</span>
             </label>
 
-            <label class="field">
+            <label class="field blue">
                 <input id="col-hex-blue" type="text" maxlength="2">
                 <span class="label">Blue 0-FF:</span>
             </label>
         </section>
         <section class="grid -medium ta-center" style="--columns: 3;">
+            <label class="field slide red">
                 <input id="col-slide-red" type="range" min="0" max="100" height="20px" class="slider red">
-
-                    <input id="col-slide-green" type="range" min="0" max="100" class="slider green">
-
+                <span class="label">Red %:</span>
+            </label>
+            <label class="field slide green">
+                <input id="col-slide-green" type="range" min="0" max="100" class="slider green">
+                <span class="label">Green %:</span>
+            </label>
+            <label class="field slide blue">
                 <input id="col-slide-blue" type="range" min="0" max="100" class="slider blue">
+                <span class="label">Blue %:</span>
+            </label>
         </section>
     </form>
-    <div id="colorpreview" width="100px" height="100px"></div>
+    <div id="colorpreview"></div>
     <h4 id="colorcode" class="ta-center">#000000</h4>
 </article>
 </body>

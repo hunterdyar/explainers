@@ -1,11 +1,22 @@
-#col-slide-red {
-    /*background-image: linear-gradient(to right, black , red);*/
+
+.field.slide input{
+    margin-bottom: 40px;
 }
-#col-slide-green {
-    /*background-image: linear-gradient(to right, black , green);*/
+
+.field.red input{
+    background: #f2d8d8;
+
 }
-#col-slide-blue {
-    /*background-image: linear-gradient(to right, black , blue);*/
+.field.green input{
+    background: #f0faf1;
+}
+.field.blue input
+{
+    background: #e1e6f7;
+}
+.field input[type=range]{
+    padding-top: 50px;
+    padding-bottom: 20px;
 }
 input{
     background: none;
