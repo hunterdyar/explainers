@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML Color Codes</title>
+  <link rel="stylesheet" href="../shared/css/cutestrap.min.css">
+
+</head>
+<body>
+<article class="wrapper -thin">
+
+    <form class ="wrapper" style="max-width: 35rem">
+        <section class="grid -medium ta-center" style="--columns: 3;">
+            <label class="field">
+                <input id="col-dec-red" type="number" step="1" min="0" max="255">
+                <span class="label">Red 0-255:</span>
+            </label>
+
+            <label class="field">
+                <input id="col-dec-green" type="number" step="1" min="0" max="255">
+                <span class="label">Green 0-255:</span>
+            </label>
+
+            <label class="field">
+                <input id="col-dec-blue" type="number" min="0" max="255" step="1">
+                <span class="label">Blue 0-255:</span>
+            </label>
+        </section>
+        <section class="grid -medium ta-center" style="--columns: 3;">
+            <label class="field">
+                <input id="col-hex-red" type="text" maxlength="2">
+                <span class="label">Red 0-FF:</span>
+            </label>
+
+            <label class="field">
+                <input id="col-hex-green" type="text" maxlength="2">
+                <span class="label">Green 0-FF:</span>
+            </label>
+
+            <label class="field">
+                <input id="col-hex-blue" type="text" maxlength="2">
+                <span class="label">Blue 0-FF:</span>
+            </label>
+        </section>
+        <section class="grid -medium ta-center" style="--columns: 3;">
+            <label class="field">
+                <input id="col-slide-red" type="range" min="0" max="100">
+                <span class="label">Red%:</span>
+            </label>
+
+            <label class="field">
+                <input id="col-slide-green" type="range" min="0" max="100">
+                <span class="label">Green%:</span>
+            </label>
+
+            <label class="field">
+                <input id="col-slide-blue" type="range" min="0" max="100">
+                <span class="label">Blue%:</span>
+            </label>
+        </section>
+    </form>
+    <div id="block" width="100px" height="100px">hi</div>
+
+</article>
+</body>
+<script>
+let red = 0;
+let green = 0;
+let blue = 0;
+let block = document.getElementById("block");
+
+let coldecred = document.getElementById("col-dec-red");
+let coldecgreen = document.getElementById("col-dec-green");
+let coldecblue = document.getElementById("col-dec-blue");
+
+coldecred.onchange = function () {
+    decChange();
+    updateBlock();
+}
+coldecgreen.onchange = function (){
+    decChange();
+    updateBlock();
+}
+coldecblue.onchange = function (){
+    decChange();
+    updateBlock();
+}
+
+let colhexred = document.getElementById("col-hex-red");
+let colhexgreen = document.getElementById("col-hex-green");
+let colhexblue = document.getElementById("col-hex-blue");
+
+colhexred.onchange = function () {
+    hexChange();
+    updateBlock();
+}
+colhexgreen.onchange = function (){
+    hexChange();
+    updateBlock();
+}
+colhexblue.onchange = function (){
+    hexChange();
+    updateBlock();
+}
+
+
+let colslidered = document.getElementById("col-slide-red");
+let colslidegreen = document.getElementById("col-slide-green");
+let colslideblue = document.getElementById("col-slide-blue");
+
+colslidered.onchange = function () {
+    slideChange();
+    updateBlock();
+}
+colslidegreen.onchange = function (){
+    slideChange();
+    updateBlock();
+}
+colslideblue.onchange = function (){
+    slideChange();
+    updateBlock();
+}
+
+function decChange()
+{
+    red = parseInt(coldecred.value);
+    colhexred.value = red.toString(16);
+    colslidered.value = (red/255)*100;
+
+    green = parseInt(coldecgreen.value);
+    colhexgreen.value = green.toString(16);
+    colslidegreen.value = (green/255)*100;
+
+    blue = parseInt(coldecblue.value);
+    colhexblue.value = blue.toString(16);
+    // colslideblue.setAttribute("value", (blue/255).toString());
+    colslideblue.value = (blue/255)*100;
+}
+function hexChange()
+{
+
+
+}
+function slideChange()
+{
+    console.log(colslideblue.value);
+}
+function updateBlock(){
+    block.style.backgroundColor = "rgb("+red+","+green+","+blue+")";
+}
+
+//remember form entries from previous page laod.
+decChange();
+updateBlock();
+</script>
+</html>

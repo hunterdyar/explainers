@@ -130,9 +130,11 @@
   <hr />
   <h4>Binary Properties</h4>
   <h5>How Many Bits?</h5>
-  <p>In the general case, we only add places to binary as we need them. In other words, we exclude leading zeros.</p>
-  <p>In Binary, it's usually common <em>not</em> to exclude leading zeros. This is because the number of bits (or places) tends to be important context.</p>
-  <p>I limited a value </p>
+  <p>With positional notation, in the general case, we only add places as we need them. In other words, we exclude leading zeros.</p>
+  <p>In Binary, it's common to <em>include</em> leading zeros. This is because the number of places (or bits) tends to be important context, especially in hardware systems.</p>
+  <p>The counter above is 8-bits. With 8 bits, one can encode 2<sup>8</sup> (256) numbers. From 0 to 255.</p>
+  <p>Many computers store memory addresses with <a href="https://en.wikipedia.org/wiki/64-bit_computing" target="_blank">64 bit</a> numbers. There are 2<sup>64</sup> possible numbers, that's 18,446,744,070,000,001,024 possible values.</p>
+
   <h5>Doubling</h5>
   <p>The first is that if you "shift" all of the 1s and 0s to the left, (put a zero in the first place), you <strong>double</strong> the number. </p>
   <p>So if you have 00001011, (11) and shift it to the left (inserting a zero), you get 00010110, which is 22. This is particularly neat, as it helps computers do more complicated math problems (like division!) really fast.</p>
@@ -141,9 +143,9 @@
   <p>It's trivial to see if a number in Binary is even or odd. Just look at the first digit. If it's a 0, it's even. If it's a 1, it's odd.</p>
   <p>Computers perform this check with a <a href="https://learn.sparkfun.com/tutorials/binary/bitwise-operators">bitwise operation</a>, out of the scope of this page.</p>
 <h5>Negative Numbers?</h5>
-  <p>To represent negative numbers, we could use our left-most digit to no longer represent the value, but act as a negative sign. So our value above, with 8 bits, goes from "-127 to 127" in range, instead of "0 to 255". We have only lost one number by accidentally introducing the concept of "negative zero".</p>
+  <p>To represent negative numbers, we could use our left-most digit to no longer represent the value, but act as a negative sign. With a leading zero, an 8 bit value could go from -127 to 127 in range, instead of 0 to 255. -127 t0 127. Although, we did accidentally introduce the concept of "negative zero".</p>
   <p>It turns out that having a negative zero is weird, but even worse is that we can't simply add numbers together anymore!</p>
-  <p>One of the most common solutions to this problem is called <strong>Two's Complement</strong>, which you can learn about with this excellent <a href="https://www.youtube.com/watch?v=4qH4unVtJkE">Ben Eater video.</a></p>
+  <p>To solve these problems, we made things slightly more complicated. One of the most common solutions to this problem is called <strong>Two's Complement</strong>, which you can learn about with this excellent <a href="https://www.youtube.com/watch?v=4qH4unVtJkE">Ben Eater video.</a></p>
 
   <h3>Hexadecimal</h3>
   <p>It's time for hexadecimal!</p>
