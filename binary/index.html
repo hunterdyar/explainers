@@ -32,13 +32,16 @@
   <p>This page will explain how numbers are encoded in a few different formats. It's an investigation of <a href="https://en.wikipedia.org/wiki/Numeral_system">numeral systems</a>. Specifically, we will be focused on <a href="https://en.wikipedia.org/wiki/Positional_notation">place-value notation</a>. <em>(These links are interesting, but like much of wikipedia, they are tend to only make sense if you already understand how all this works).</em></p>
 
   <h2>Why Encode Numbers anyway?</h2>
-  <p>This is an unfair question, because we already are encoding numbers. Look at me go: 42. You just parsed a number! You read that as <a href="https://en.wikipedia.org/wiki/Decimal">decimal</a>, interpreting the values to be... well, forty two.</p>
-  <p>and why roman numerals or tally marks might be different. It's likely that you have some degree of familiarity with encoding numbers in at least some form beyond the decimal system we commonly use.</p>
+  <p>This is an unfair question, because we already are encoding numbers. You basically have to, in order to do <em>anything</em> with numbers. Look at me go: 42. You just parsed a number! You read that as <a href="https://en.wikipedia.org/wiki/Decimal">decimal</a>, interpreting the values to be... well, forty two.</p>
+  <p>What this question actually means is "Why learn a way to encode numbers beyond decimal?", which is a more fair question. The short answer is: They are used by the systems we are using! Being even just familiar enough to recognize them gives us a huge advantage in understanding all sorts of design decisions, errors, and more. "Computer Gibberish" becomes "those are numbers" (gibberish they still may be). Nobody is asking you to do <a href="https://www.youtube.com/watch?v=v3-a-zqKfgA" target="_blank" alt="Don't click this link, you don't have time for this rabbit hole.">long division</a> in a new base system.</p>
+  <p>In other words, instead of writing or using these systems directly, this knowledge is more likely to be helpful as you will be slightly less confused - decisions will seem just that little bit less arbitraty - when interacting with basically anything that has to do with <em>digital media</em> or <em>computers</em>. Which is a lot of things.</p>
+  <p>The last reason is because I said so. You are probably here as one my students, and I have assigned you this as a reading; so that really should be a good enough reason.</p>
   <hr />
     <h3>Commonly Used Numeral Systems</h3>
     <h4>Tally Marks</h4>
     <img src="images/tally.png" alt="8 Tally marks. Drawn vertical lines. 5 are clustered together with the 5th diagonally crossing the first 4." />
-    <p>Draw a line for each mark, and a slash to visually cluster 5 together. The clustering makes it easy to add up the tally's: by 5's instead of by 1s. Tally marks have the advantage of being great for counting, you don't have to remember the tally, you just keep adding marks. They are bad at representing "zero".</p>
+    <p>For every digit, make a mark. Easy!</p>
+    <p>We can do better: Using a slash across 4 lines to visually cluster a group of 5 marks together. The clustering makes it easy to add up the tally's by 5's instead of individually. Tally marks have the advantage of being great for counting, you don't have to remember the tally, you just keep adding marks. They are bad at representing "zero".</p>
     <h4>Dot-and-Line System</h4>
   <img src="images/boxtallynumbers.png" alt="I often forget what I am doing and put the fifth dot in the center, like the pips on a dice. Then frown, erase that, and draw the line like I originally wanted."/>
   <p><em>The numbers 1 through 10 in the dox-tally system.</em></p>
@@ -71,15 +74,18 @@
     </tbody>
   </table>
   <p>Roman Numerals is a famous notation, and one you have likely experienced. It supports positive, whole numbers (and some <a href="https://en.wikipedia.org/wiki/Roman_numerals#Fractions">fractions</a>, apparently).</p>
+  <p>Here is one through 20 in roman numerals: I, II, III, IV, V, VI, VII, VIII, IX, X, XI, XII, XIII, XIV, XV, XVI, XVII, XVIII, XIX, XX</p>
   <p>They are generally written by adding up the number values. To keep things compact, there is subtraction involved too, like "IV" for 4. Generally, as you read left-to-right, you add numbers that are larger or the same as the next value to their right, and subtract values that are smaller than the value to their right. You'll only ever subtract a single digit (8 is VIII, because IIX does not work). Most numbers are written as sums only, and large-to-small values. It's a bit more complicated than this, and there are a lot of variations.
+  <p>18 is XVIII. Looking at the table above, X=10, V=5, and I = 1. 10+5+1+1+1 = 18.</p>
   <p>One complication is that there are multiple notations that can readably get to the same value. IIII or IV for 4, for example. Hypothetically, you could just keep adding I's like a tally system, and it would still be readable.</p>
-  <p>62 can be written as LXII. 50+10+1+1. Each number gets samller left to right, so we sum. On the other hand, 42 would be "XLII". L is 50, X is 10. XL is 50-10, so 40. II is 2. 50-10+2 = 42.</p>
+  <p>62 can be written as LXII. 50+10+1+1. Each number gets smaller left to right, so we sum every time.</p>
+  <p>On the other hand, 42 would be "XLII". L is 50, X is 10. L is bigger than X, so XL is 50-10, so 40. II is 2. 50-10+2 = 42.</p>
   <img src="images/superbowl.jpg" alt="Super Bowl XLVII Roman Numerals (8449740054) by Austin Kirk via Wikimedia Commons"/>
   <em><a href="https://commons.wikimedia.org/wiki/File:Super_Bowl_XLVII_Roman_Numerals_(8449740054).jpg">Super Bowl XLVII Roman Numerals by Austin Kirk via Wikimedia Commons.</a> What number is this?</em><br />
   <br />
-  <p>You might have seen "MCM" a lot. "MCM" is 1000, CM is 900 (1000-100). So MCM is 1900 - and we are probably reading some year.</p>
+  <p>You might have seen "MCM" a lot. "MCM" is 1000, CM is 900 (1000-100). So MCM is 1900 - and we are probably reading the start of a year.</p>
   <p>MMXXIII is easy, as there is no subtraction: 2023. 2M's plus 2X's plus 3 I's = 2000+20+3.</p>
-  <p>There are some strings that are not parseable. "IXI", for example, is "10-1+1". As a puzzle, one might parse this as '10', but it would be considered invalid.</p>
+  <p>You can't just mash these letters together in any order - it's often not parseable. "IXI", for example, is "10-1+1". Perhaps as a puzzle, one might parse this as '10', but it would be considered invalid.</p>
   <form class ="wrapper" style="max-width: 35rem">
   <label class="field">
   <input id="roman-decimal" type="number" step="1">
@@ -92,7 +98,7 @@
     <span class="label">Roman:</span>
   </label>
   </form>
-  <p><em>You can convert in both directions, changing one will convert the other. The converter I am using here is fairly simple, and will break with large numbers.</em></p>
+  <p><em>You can convert in both directions, changing one will convert the other. The converter I am using here is fairly simple, and will break with very large numbers.</em></p>
   <hr />
   <h2>Positional Notation</h2>
   <p>Positional Notation is the underlying system powering binary, hexadecimal, decimal, and other useless or <a href="https://en.wikipedia.org/wiki/Babylonian_cuneiform_numerals">archaic</a> notations.</p>
