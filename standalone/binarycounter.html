@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Binary, Hex, and Encoding Numbers</title>
+  <link rel="stylesheet" href="../shared/css/cutestrap.min.css">
+  <style>
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:24px;
+      overflow:hidden;padding:10px 5px;word-break:normal;}
+    .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:18px;
+      font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+    .tg .tg-amwm{font-weight:bold;text-align:center;vertical-align:top}
+    .tg .tg-0lax{text-align:center;vertical-align:top}
+    #binaryCounter{
+      font-family: monospace;
+      margin-bottom: 0;
+    }
+    #decimalBinaryCounter{
+      margin-top:0;
+      color:#777;
+    }
+  </style>
+</head>
+<body>
+<article class="wrapper -thin">
+  <form class="wrapper -thin">
+    <h4 class="mt-zero ta-center">Binary Counter</h4>
+    <section class="grid -medium ta-center" style="--columns: 1;">
+      <h2 id="binaryCounter">00000000</h2>
+      <h4 id="decimalBinaryCounter">0</h4>
+    </section>
+    <section class="grid -medium ta-right" style="--columns: 2;">
+      <input id="counter-minus" class="button -secondary" value="-1" />
+      <input id="counter-plus" class="button -secondary" value="+1" />
+    </section>
+  </form>
+</article>
+
+<script>
+
+  var number = 0;
+  let counter = document.getElementById("binaryCounter");
+  var decCounter = document.getElementById("decimalBinaryCounter");
+  let counterminus = document.getElementById("counter-minus");
+  let counterplus= document.getElementById("counter-plus");
+
+  counterplus.onclick = function (){binaryCounter(1)};
+  counterminus.onclick = function (){binaryCounter(-1)};
+  binaryCounter(0);
+
+  function binaryCounter(delta)
+  {
+    number = number+delta;
+    if(number < 0){
+      number = 0;
+    }
+    counterminus.disabled = number===0;
+    counterplus.disabled = number===255;//I have not tested this.
+    var n = (number >>> 0).toString(2);
+    counter.innerText = "00000000".substr(n.length) + n;
+    decCounter.innerText = number;
+  }
+
+
+</script>
+</body>
+</html>

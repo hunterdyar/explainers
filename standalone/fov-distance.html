@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FOV and Distance</title>
+  <link rel="stylesheet" href="../shared/css/cutestrap.min.css">
+  <script src="/shared/js/three.js"></script>
+
+  <style>
+    .slidecontainer{
+      width: 100%;
+    }
+    .slider {
+      -webkit-appearance: none;
+      width: 658px;
+      height: 0;
+      border-radius: 5px;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 35px;
+      height: 35px;
+      border-radius: 100%;
+      background: #444444;
+      cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+      width: 40px;
+      height: 40px;
+      border-radius: 100%;
+      background: #444444;
+      cursor: pointer;
+    }
+    .slidecontainer{
+      margin-top: 2rem;
+    }
+    input{
+      margin-bottom: 1em;
+    }
+  </style>
+
+</head>
+<body>
+<article class="wrapper -thin">
+  <canvas id="demo1" width="688px" height="400px"></canvas>
+  <div class="slidecontainer">
+    <label for="fovSlider">fov (zoom)</label>
+    <input type="range" min="05" max="180" value="50" class="slider" id="fovSlider">
+    <label for="dollySlider">distance (position)</label>
+    <input type="range" min="0" max="100" value="50" class="slider" id="dollySlider">
+  </div>
+
+</article>
+
+<script>
+  //// Demo 1
+  var fovSlide = document.getElementById("fovSlider");
+  var dollSlide = document.getElementById("dollySlider");
+
+
+  var scene = new THREE.Scene();
+  var camThree = new THREE.PerspectiveCamera(90, 688 / 400, 0.1, 1000);
+
+  //var renderer = new THREE.WebGLRenderer();
+  var renderer = new THREE.WebGLRenderer( { canvas: demo1 } );
+  renderer.setSize(688, 400);
+  //document.body.appendChild(renderer.domElement);
+
+  const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+  const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 , wireframe: true }  );
+  const cube = new THREE.Mesh( geometry, material );
+  scene.add( cube );
+
+  const geometry2 = new THREE.BoxGeometry( 1, 1, 1 );
+  const material2 = new THREE.MeshBasicMaterial( { color: 0xff0000 , wireframe: true } );
+  const cube2 = new THREE.Mesh( geometry2, material2 );
+  cube2.position.x = -2
+  cube2.position.z = 2;
+  scene.add( cube2 );
+
+  const geometry3 = new THREE.BoxGeometry( 1, 1, 1 );
+  const material3 = new THREE.MeshBasicMaterial( { color: 0x0000ff , wireframe: true }  );
+  const cube3 = new THREE.Mesh( geometry3, material3 );
+  cube3.position.x = 2;
+  cube2.position.z = -2;
+
+
+  const mesh = new THREE.Mesh( new THREE.PlaneGeometry( 10 , 10 ), new THREE.MeshBasicMaterial( { color: 0x999999, wireframe: true } ) );
+  mesh.rotation.x = - Math.PI / 2;
+  mesh.receiveShadow = true;
+  mesh.position.y = -0.5;
+  scene.add( mesh );
+
+  scene.add( cube3 );
+
+  camThree.position.z = dollSlide.value;
+  var render = function() {
+    requestAnimationFrame(render);
+    camThree.fov = fovSlide.value;
+    camThree.updateProjectionMatrix();
+    camThree.position.z = dollSlide.value/10 + 0.61;//+6 to stay outside of cube at 0,0,0
+    renderer.render(scene, camThree);
+  };
+
+  render();
+
+  // Update the current slider value (each time you drag the slider handle)
+  fovSlide.oninput = function() {
+    camThree.fov = this.value;
+    // render();
+  }
+</script>
+</body>
+</html>

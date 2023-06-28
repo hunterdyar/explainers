@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Perspective Distortion</title>
+    <link rel="stylesheet" href="../shared/css/cutestrap.min.css">
+    <script src="/shared/js/three.js"></script>
+    <script src="/shared/js/rough/rough.js"></script>
+
+    <style>
+        .slidecontainer{
+            width: 100%;
+        }
+        .slider {
+            -webkit-appearance: none;
+            width: 658px;
+            height: 0;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 100%;
+            background: #444444;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 100%;
+            background: #444444;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+<body>
+<article class="wrapper -thin">
+    <canvas id="demo2" width="688px" height="200px"></canvas>
+    <div class="sketch">
+        <label for="cameraPos">Camera Position</label>
+        <input type="range" min="50" max="600" value="110" class="slider" id="cameraPos">
+        <label for="subjectPos">Subject Position</label>
+        <input type="range" min="0" max="550" value="325" class="slider" id="subjectPos">
+    </div>
+    <h5>Background is <span id="divisions">0</span> camera-subject units away.</h5>
+    <h5>Background will appear <span id="scaleFactor">0</span> times as tall as the subject.</h5>
+    <h5>Background will take <span id="scaleFactorSquare">0</span> times the area as the subject.</h5>
+    <p><em>These numbers, despite their precision, are only loose estimates.</em></p></article>
+<p><a href="../perspective/index.html">Read more</a></p>
+
+<script>
+    //// Demo 2
+    const canvasElement = document.getElementById('demo2');
+    const demo2 = rough.canvas(canvasElement);
+    const divisionsLabel = document.getElementById('divisions');
+    const scaleLabel = document.getElementById('scaleFactor');
+    const scaleLabelSquare = document.getElementById('scaleFactorSquare');
+
+    var cameraSlider = document.getElementById("cameraPos");
+    var subjectSlider = document.getElementById("subjectPos");
+
+    let middleY = demo2.canvas.height/2;
+    let x = 5;
+    function draw()
+    {
+        let x = Number(cameraSlider.value);
+        demo2.ctx.clearRect(0, 0, demo2.canvas.width, demo2.canvas.height);
+        camera = {};
+        camera.size = 50;
+        camera.x = x;
+        camera.y = middleY - camera.size-2;
+        camera.center = {};
+        camera.center.x = camera.x + (camera.size*0.75)/2;
+        camera.center.y = camera.y+camera.size/2;
+
+        subjectSlider.min = x-25;
+
+        // subjectSlider.max = 600;
+        let sPos = Number(subjectSlider.value);
+        // sPos = 300;
+
+        let subject ={};
+        subject.x = sPos+camera.size;
+        subject.y = camera.center.y;
+        // cameraSlider.max = sPos-10;
+
+        let background = {};
+        background.x = 600+camera.size;
+        background.y = camera.center.y + 60;
+
+        subjectSlider.max = 600;
+
+        //camera
+        demo2.rectangle(camera.x-6,camera.y+4,camera.size,camera.size*0.7,{
+            fill: 'grey'
+        });
+        demo2.circle(camera.center.x,camera.center.y,20,{
+            fill: 'black',
+            hachureAngle: 40
+        })
+
+        demo2.line(camera.center.x,camera.center.y,subject.x,subject.y);
+        let cameraSubjectDistance = subject.x - camera.center.x;
+        let cameraBackgroundDistance = background.x - camera.center.x;
+        let divisions = cameraBackgroundDistance / cameraSubjectDistance;
+
+        for(let i = 0;i<divisions;i++)
+        {
+            let lx = (i * cameraSubjectDistance) + camera.center.x;
+            demo2.line(lx,background.y-10,lx,background.y+10);
+        }
+
+        demo2.line(camera.center.x,background.y,background.x,background.y);
+        demo2.circle(subject.x,subject.y,50,{
+            fill: 'blue',
+            hachureAngle: 31
+        })
+        demo2.circle(background.x,background.y,50,{
+            fill: 'green',
+            hachureAngle: 60, // angle of hachure,
+            hachureGap: 1
+        })
+
+        //labels
+        divisionsLabel.innerText = ""+Math.round(divisions*1000)/1000;//cast
+        //scaleFactor
+        scaleLabel.innerText = Math.round(1000/(divisions))/1000;
+        let area = Math.round(1000/(divisions*divisions))/1000;
+        if(area < 0.001)
+        {
+            scaleLabelSquare.innerText = "<.001";
+        }else{
+            scaleLabelSquare.innerText = area;
+        }
+
+    }
+
+    cameraSlider.oninput = function() {
+        draw();
+    }
+    subjectSlider.oninput = function() {
+        draw();
+    }
+
+    draw();
+
+</script>
+</body>
+</html>
