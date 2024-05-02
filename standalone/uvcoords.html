@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Babylon 1</title>
+
+  <style>
+    html, body {
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    #renderCanvas {
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+  </style>
+
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+
+</head>
+
+<body>
+
+<canvas id="renderCanvas" width="600px" height="400px"></canvas>
+
+<script>
+  const canvas = document.getElementById("renderCanvas"); // Get the canvas element
+  const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+
+  const createScene = function () {
+
+    // This creates a basic Babylon Scene object (non-mesh)
+    const scene = new BABYLON.Scene(engine);
+    scene.clearColor = new BABYLON.Color3(1,1,1);//white bg
+    var crateTex = new BABYLON.Texture("../uvmaps/sketches/textures/crate1_diffuse.png",scene);
+    // This creates and positions a free camera (non-mesh)
+    const camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -5), scene);
+    // This targets the camera to scene origin
+    camera.setTarget(BABYLON.Vector3.Zero());
+    // This attaches the camera to the canvas
+    camera.attachControl(canvas, true);
+    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+    const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+    // Default intensity is 1. Let's dim the light a small amount
+    light.intensity = 0.7;
+    // Our built-in 'sphere' shape.
+    const cube = BABYLON.MeshBuilder.CreateBox("cube", {diameter: 2, segments: 32}, scene);
+    var crateMat = new BABYLON.StandardMaterial("crateMat");
+    crateMat.diffuseTexture = crateTex;
+
+    cube.material = crateMat;
+
+
+    cube.updateFacetData();
+    // Move the sphere upward 1/2 its height
+    cube.position.y = 1;
+    // Our built-in 'ground' shape.
+    const ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
+    ground.material = crateMat;
+    ground.updateFacetData();
+
+    const marker = BABYLON.MeshBuilder.CreateSphere("marker",{diameter :0.1 },scene);
+    var mat = new BABYLON.StandardMaterial("mat", scene);
+    mat.diffuseColor = new BABYLON.Color3(1,0,0);
+    marker.material = mat;
+
+    var uv = {};
+
+    // GUI
+    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    var loadedGUI = advancedTexture.parseFromURLAsync("../uvmaps/sketches/babylon/guiTexture.json");
+    img = advancedTexture.getControlByName("Image");
+    // img.source = "../textures/crate1_diffuse.png";
+    function rayFilter(mesh) {
+      if (mesh == marker) {
+        return false;
+      }
+      return true;
+    }
+    function castRay()
+    {
+      pointGUI = advancedTexture.getControlByName("Point");
+      pointGUI2 = advancedTexture.getControlByName("Point2");
+      labelxyz = advancedTexture.getControlByName("LabelXYZ");
+      labeluv = advancedTexture.getControlByName("LabelUV");
+
+      var ray = scene.createPickingRay(scene.pointerX,scene.pointerY,BABYLON.Matrix.Identity(),camera);
+      var pickResult = scene.pickWithRay(ray,rayFilter);
+
+      if (pickResult.hit) {
+        var p = pickResult.pickedPoint;
+        if(marker)
+        {
+          marker.position = p;
+        }
+        uv = pickResult.getTextureCoordinates();
+        var facetIndex = pickResult.pickedMesh.getClosestFacetAtCoordinates(p.x, p.y, p.z);
+
+        if(labelxyz) {
+          labelxyz.text = "x: " + p.x.toFixed(2) + " y:" + p.y.toFixed(2) + " z: "+ p.z.toFixed(2);
+        }
+        if(labeluv) {
+          labeluv.text = "u: " + uv.x.toFixed(2) + " v:" + uv.y.toFixed(2);
+        }
+
+        if(pointGUI){
+          pointGUI.left =  uv.x * 200 - 100;
+          pointGUI.top = -uv.y * 200 + 100;
+        }
+        if(pointGUI2){
+          pointGUI2.left =  uv.x * 200 - 100;
+          pointGUI2.top = -uv.y * 200 + 100;
+        }
+      }else{
+        if(labelxyz) {
+          labelxyz.text = "";
+        }
+        if(labeluv) {
+          labeluv.text = "";
+        }
+      }
+    }
+
+    var alpha = 0;
+    scene.onBeforeRenderObservable.add(function () {
+      cube.rotation.y = Math.cos(alpha)*2;
+      castRay();
+      alpha += 0.01;
+    });
+
+    return scene;
+  };
+  const scene = createScene(); //Call the createScene function
+
+  // Register a render loop to repeatedly render the scene
+  engine.runRenderLoop(function () {
+      scene.render();
+
+  });
+
+  function getForwardVector(_mesh) {
+
+    _mesh.computeWorldMatrix(true);
+    var forward_local = new BABYLON.Vector3(0, 0, 1);
+    worldMatrix = _mesh.getWorldMatrix();
+    return BABYLON.Vector3.TransformNormal(forward_local, worldMatrix);
+  }
+
+  // Watch for browser/canvas resize events
+  window.addEventListener("resize", function () {
+    engine.resize();
+  });
+</script>
+
+</body>
+
+</html>
