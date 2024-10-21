@@ -114,10 +114,10 @@
         let angleY = lPos
 
         //Angle
-        let top = demo.line(camera.center.x,middleY,width,middleY+angleY);
-        let bot = demo.line(camera.center.x,middleY,width,middleY-angleY);
+        demo.line(camera.center.x,middleY,width,middleY+angleY);
+        demo.line(camera.center.x,middleY,width,middleY-angleY);
         let fPercent = fPos/focusSlider.max
-        fPercent = lerp(1,0.1,fPercent);//min focus distance
+        fPercent = lerp(0.1,1,fPercent);//min focus distance
         //Focal Distance
         let fPosX = (fPercent) * (width-camera.center.x) + camera.center.x
         fPosY = (angleY/width)*fPosX
@@ -126,13 +126,13 @@
         //aperture
 
         let dofPercent = (aPos/apertureSlider.max)
-
-        dofPercent = (dofPercent*dofPercent) * (1-Math.pow(lPercent,1.5)) * (1-lPercent)* (1-lPercent)
+        dofPercent = ecirc(dofPercent)
+        dofPercent = lerp(0.25,1,dofPercent)
+        dofPercent = (dofPercent*dofPercent) * (1-esin(lPercent))
         //DOF
 
         let near = (fPercent-(Math.pow(fPercent,1.5))*dofPercent) * (width-camera.center.x) + camera.center.x
         let far = (fPercent+(Math.pow(fPercent,1.5))*dofPercent) * (width-camera.center.x) + camera.center.x
-        far = far*1.1
         //adjust to focal distance
         // near = lerp(0,near,fPercent-0.1)
         let nearY = (angleY/width)*near
@@ -166,7 +166,14 @@
         t = t > 1 ? 1 : t;
         t = t<0 ? 0 : t;
 
-        return a*t + b*(1-t)
+        return b*t + a*(1-t)
+    }
+    function ecirc(x) {
+        return Math.sqrt(1 - Math.pow(x - 1, 2));
+    }
+    function esin(x) {
+        return Math.sin((x * Math.PI) / 2);
+
     }
 </script>
 </body>
