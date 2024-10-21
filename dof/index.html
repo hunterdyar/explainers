@@ -59,7 +59,7 @@
     <canvas id="demo" width="688px" height="400px"></canvas>
     <div class="sketch">
         <label for="apertureInput">Aperture</label>
-        <input type="range" min="1.8" max="22" value="2" class="slider" id="apertureInput">
+        <input type="range" min="0" max="100" value="2" class="slider" id="apertureInput">
         <label for="focusInput">Focal Distance</label>
         <input type="range" min="0" max="100" value="50" class="slider" id="focusInput">
         <label for="lensInput">Lens Width</label>
@@ -84,7 +84,6 @@
     let width = demo.canvas.width - 30;
     function draw()
     {
-        let dofPercent = 0.33
         demo.ctx.clearRect(0, 0, demo.canvas.width, demo.canvas.height);
         camera = {};
         camera.size = 50;
@@ -97,6 +96,7 @@
         let aPos = Number(apertureSlider.value);
         let fPos = Number(focusSlider.value);
         let lPos = (lensSlider.max-Number(lensSlider.value))*2;
+        let lPercent = (lensSlider.value-lensSlider.min)/(lensSlider.max-lensSlider.min)
 
         let background = {};
         background.x = 600+camera.size;
@@ -116,25 +116,34 @@
         //Angle
         let top = demo.line(camera.center.x,middleY,width,middleY+angleY);
         let bot = demo.line(camera.center.x,middleY,width,middleY-angleY);
-
+        let fPercent = fPos/focusSlider.max
+        fPercent = lerp(1,0.1,fPercent);//min focus distance
         //Focal Distance
-        fPos = (fPos/focusSlider.max) * (width-camera.center.x) + camera.center.x
-        fPosY = (angleY/width)*fPos
-        let fdLine = demo.line(fPos,middleY+fPosY,fPos,middleY-fPosY);
+        let fPosX = (fPercent) * (width-camera.center.x) + camera.center.x
+        fPosY = (angleY/width)*fPosX
+        let fdLine = demo.line(fPosX,middleY+fPosY,fPosX,middleY-fPosY);
 
+        //aperture
+
+        let dofPercent = (aPos/apertureSlider.max)
+
+        dofPercent = (dofPercent*dofPercent) * (1-Math.pow(lPercent,1.5)) * (1-lPercent)* (1-lPercent)
         //DOF
 
+        let near = (fPercent-(Math.pow(fPercent,1.5))*dofPercent) * (width-camera.center.x) + camera.center.x
+        let far = (fPercent+(Math.pow(fPercent,1.5))*dofPercent) * (width-camera.center.x) + camera.center.x
+        far = far*1.1
+        //adjust to focal distance
+        // near = lerp(0,near,fPercent-0.1)
+        let nearY = (angleY/width)*near
+        let farY = (angleY/width)*far
 
-        //Camera
-        demo.circle(subject.x,subject.y,50,{
-            fill: 'blue',
-            hachureAngle: 31
-        })
-        demo.circle(background.x,background.y,50,{
-            fill: 'green',
-            hachureAngle: 60, // angle of hachure,
-            hachureGap: 1
-        })
+        //demo.line(near,middleY+nearY,near,middleY-nearY);
+        //demo.line(far,middleY+farY,far,middleY-farY);
+
+        demo.polygon([[near, middleY+nearY], [near, middleY-nearY],  [far, middleY-farY],[far, middleY+farY]], {fill: "green"});
+       // let farDofLine = demo.line(fPos,middleY+fPosY,fPos,middleY-fPosY);
+
 
     }
 
@@ -150,6 +159,15 @@
     }
 
     draw();
+
+    function lerp(a,b,t)
+    {
+        //clamp
+        t = t > 1 ? 1 : t;
+        t = t<0 ? 0 : t;
+
+        return a*t + b*(1-t)
+    }
 </script>
 </body>
 </html>
