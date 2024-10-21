@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Depth Of Field</title>
+    <link rel="stylesheet" href="../shared/css/cutestrap.min.css">
+    <script src="/shared/js/three.js"></script>
+    <script src="/shared/js/rough/rough.js"></script>
+
+    <style>
+        .slidecontainer{
+            width: 100%;
+        }
+        .slider {
+            -webkit-appearance: none;
+            width: 658px;
+            height: 0;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 100%;
+            background: #444444;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 100%;
+            background: #444444;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+<body>
+<article class="wrapper -thin">
+    <h1>Depth Of Field</h1>
+    <p>controlling blurriness</p>
+    <hr />
+    <h3>Three Inputs, One Output</h3>
+    <p>Three properties control the depth of field.</p>
+    <ul>
+        <li>Aperture (F-stop)</li>
+        <li>Focal Distance (Focus)</li>
+        <li>Focal Width (Zoom)</li>
+    </ul>
+
+    <canvas id="demo" width="688px" height="400px"></canvas>
+    <div class="sketch">
+        <label for="apertureInput">Aperture</label>
+        <input type="range" min="1.8" max="22" value="2" class="slider" id="apertureInput">
+        <label for="focusInput">Focal Distance</label>
+        <input type="range" min="0" max="100" value="50" class="slider" id="focusInput">
+        <label for="lensInput">Lens Width</label>
+        <input type="range" min="1" max="100" value="50" class="slider" id="lensInput">
+    </div>
+    <hr />
+    <p>We mostly think of the Aperture (f-stop) as the main tool to control depth of field, in many circumstances, lens width and focal distance are not adjustable without impacting the look of the final image. Aperture effects exposure, which can be compensated for without (sometimes) affecting the resulting image, so it's the most 'independent' control.
+    </p>
+</article>
+
+<script>
+    //// Demo 2
+    const canvasElement = document.getElementById('demo');
+    const demo = rough.canvas(canvasElement);
+
+    var apertureSlider = document.getElementById("apertureInput");
+    var focusSlider = document.getElementById("focusInput");
+    var lensSlider = document.getElementById("lensInput");
+
+
+    let middleY = demo.canvas.height/2;
+    let width = demo.canvas.width - 30;
+    function draw()
+    {
+        let dofPercent = 0.33
+        demo.ctx.clearRect(0, 0, demo.canvas.width, demo.canvas.height);
+        camera = {};
+        camera.size = 50;
+        camera.x = 15;
+        camera.y = middleY - camera.size/2;
+        camera.center = {};
+        camera.center.x = camera.x + (camera.size*0.75)/2;
+        camera.center.y = camera.y+camera.size/2;
+
+        let aPos = Number(apertureSlider.value);
+        let fPos = Number(focusSlider.value);
+        let lPos = (lensSlider.max-Number(lensSlider.value))*2;
+
+        let background = {};
+        background.x = 600+camera.size;
+        background.y = camera.center.y + 60;
+
+        //camera
+        demo.rectangle(camera.x-6,camera.y+4,camera.size,camera.size*0.7,{
+            fill: 'grey'
+        });
+        demo.circle(camera.center.x,camera.center.y,20,{
+            fill: 'black',
+            hachureAngle: 40
+        })
+
+        let angleY = lPos
+
+        //Angle
+        let top = demo.line(camera.center.x,middleY,width,middleY+angleY);
+        let bot = demo.line(camera.center.x,middleY,width,middleY-angleY);
+
+        //Focal Distance
+        fPos = (fPos/focusSlider.max) * (width-camera.center.x) + camera.center.x
+        fPosY = (angleY/width)*fPos
+        let fdLine = demo.line(fPos,middleY+fPosY,fPos,middleY-fPosY);
+
+        //DOF
+
+
+        //Camera
+        demo.circle(subject.x,subject.y,50,{
+            fill: 'blue',
+            hachureAngle: 31
+        })
+        demo.circle(background.x,background.y,50,{
+            fill: 'green',
+            hachureAngle: 60, // angle of hachure,
+            hachureGap: 1
+        })
+
+    }
+
+    //drawHooks
+    apertureSlider.oninput = function() {
+        draw();
+    }
+    focusSlider.oninput = function() {
+        draw();
+    }
+    lensSlider.oninput = function() {
+        draw();
+    }
+
+    draw();
+</script>
+</body>
+</html>
