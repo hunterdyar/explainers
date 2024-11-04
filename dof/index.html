@@ -96,15 +96,15 @@
     function calc(){
         let aPos = fstops[Number(apertureSlider.value)];
         apertureLabel.innerText = "Aperture - f"+aPos;
-        let fPos = Number(focusSlider.value);
-        distanceLabel.innerText = "Focal Distance - "+fPos+"meters";
-        let lPos = Number(lensSlider.value)/80;
+        let fPos = Number(focusSlider.value)*1000;
+        distanceLabel.innerText = "Focal Distance - "+fPos/1000+"meters";
+        let lPos = Number(lensSlider.value)*2 + 16;
         widthLabel.innerText = "Lens Width - "+lPos+"mm";
 
         let h = hyper(fPos,aPos);
         nearCalc = near(fPos,h,lPos);
         farCalc = far(fPos, h, lPos)
-        calcText.innerText = "Focus is "+fPos+". near: "+nearCalc+", far: "+farCalc;
+        calcText.innerText = "Focus is "+ fPos +"m. near: "+ +nearCalc.toFixed(2)+"m, far: "+ +farCalc.toFixed(2)+"m";
     }
 
     function draw()
