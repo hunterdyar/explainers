@@ -100,11 +100,10 @@
         distanceLabel.innerText = "Focal Distance - "+distance/1000+"meters";
         let lPos = Number(lensSlider.value)*2 + 16;
         widthLabel.innerText = "Lens Width - "+lPos+"mm";
-        console.log("width",lPos,widthToAngle(lPos));
         let h = hyper(lPos,aPos);
         nearCalc = near(distance, h, lPos);
         farCalc = far(distance, h, lPos)
-        calcText.innerText = "Focus is "+ distance/1000 +"m. near: "+ +(nearCalc/1000).toFixed(2)+"m, far: "+ +(farCalc/1000).toFixed(2)+"m";
+        calcText.innerText = "Focus is "+ distance/1000 +"m. near: "+ +(nearCalc/1000).toFixed(2)+"m, far: "+ +(farCalc/1000).toFixed(2) + (farCalc !== Infinity ? "m" : "");
     }
 
     function draw()
@@ -220,10 +219,11 @@
         return f < 0 ? Infinity : f;
     }
     function widthToAngle(width){
-       // 2×tan−1(H/2*width)
-        let x = 35;//Sensor size. I think we actually just want the horizontal for the top-down drawing, not the diagonal (as would be the diagonal FOV)
-        return 2*Math.atan(x/2*width)
-        //uhg i think its a rad/deg thing
+        let x = 43.3;//Sensor size. I think we actually just want the horizontal for the top-down drawing, not the diagonal (as would be the diagonal FOV)
+        let y = x/(2*width);
+        y = y*180/Math.PI
+        console.log(y);
+        return 2*Math.atan(y);
     }
 
 </script>
