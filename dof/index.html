@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Depth Of Field</title>
+    <link rel="stylesheet" href="../shared/css/cutestrap.min.css">
+    <script src="../shared/js/three.js"></script>
+    <script src="../shared/js/rough/rough.js"></script>
+
+    <style>
+        .slidecontainer{
+            width: 100%;
+        }
+        .slider {
+            -webkit-appearance: none;
+            width: 658px;
+            height: 0;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 100%;
+            background: #444444;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 100%;
+            background: #444444;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+<body>
+<article class="wrapper -thin">
+    <h1>Depth Of Field</h1>
+    <p>Because we need that blur!</p>
+    <hr />
+    <h3>Three Inputs, One Output</h3>
+    <p>Three properties control the depth of field.</p>
+    <ul>
+        <li>Aperture (F-stop)</li>
+        <li>Focal Distance (Focus)</li>
+        <li>Focal Width (Zoom)</li>
+    </ul>
+
+    <canvas id="demo" width="688px" height="400px"></canvas>
+    <div class="sketch">
+        <label for="apertureInput" id = "apertureLabel">Aperture - 1.0</label>
+        <input type="range" min="0" max="15" value="2" class="slider" id="apertureInput">
+        <label for="focusInput" id="distanceLabel">Focal Distance - </label>
+        <input type="range" min="0.5" max="100" value="50" class="slider" id="focusInput">
+        <label for="lensInput" id = "widthLabel">Lens Width</label>
+        <input type="range" min="1" max="100" value="50" class="slider" id="lensInput">
+    </div>
+    <hr />
+    <p id="calc">test</p>
+    <hr />
+    <p>We mostly think of the Aperture (f-stop) as the main tool to control depth of field, in many circumstances, lens width and focal distance are not adjustable without impacting the look of the final image. Aperture effects exposure, which can be compensated for without (sometimes) affecting the resulting image, so it's the most 'independent' control.
+    </p>
+</article>
+
+<script>
+    //
+    const fstops = [1.2,1.4,1.6,1.8,2,2.2,2.5,2.8,3.2,3.5,4,4.5,5,5.6,6.3,7.1,8,9,11,13,13,16,18,20,22,25,29,32]
+    //
+    const canvasElement = document.getElementById('demo');
+    const demo = rough.canvas(canvasElement);
+
+    const apertureSlider = document.getElementById("apertureInput");
+    const apertureLabel = document.getElementById("apertureLabel");
+    apertureSlider.max = fstops.length-1;
+    let focusSlider = document.getElementById("focusInput");
+    const distanceLabel = document.getElementById("distanceLabel");
+    let lensSlider = document.getElementById("lensInput");
+    const widthLabel = document.getElementById("widthLabel");
+
+    let middleY = demo.canvas.height/2;
+    let width = demo.canvas.width - 30;
+
+    let nearCalc = 0;
+    let farCalc = 0;
+
+    function calc(){
+        let aPos = fstops[Number(apertureSlider.value)];
+        apertureLabel.innerText = "Aperture - f"+aPos;
+        let distance = Number(focusSlider.value)*1000;
+        distanceLabel.innerText = "Focal Distance - "+distance/1000+"meters";
+        let lPos = Number(lensSlider.value)*2 + 16;
+        widthLabel.innerText = "Lens Width - "+lPos+"mm";
+        let h = hyper(lPos,aPos);
+        nearCalc = near(distance, h, lPos);
+        farCalc = far(distance, h, lPos)
+        calcText.innerText = "Focus is "+ distance/1000 +"m. near: "+ +(nearCalc/1000).toFixed(2)+"m, far: "+ +(farCalc/1000).toFixed(2) + (farCalc !== Infinity ? "m" : "");
+    }
+
+    function draw()
+    {
+        demo.ctx.clearRect(0, 0, demo.canvas.width, demo.canvas.height);
+        camera = {};
+        camera.size = 50;
+        camera.x = 15;
+        camera.y = middleY - camera.size/2;
+        camera.center = {};
+        camera.center.x = camera.x + (camera.size*0.75)/2;
+        camera.center.y = camera.y+camera.size/2;
+
+        let aPos = Number(apertureSlider.value);
+        let fPos = Number(focusSlider.value);
+        let lPos = (lensSlider.max-Number(lensSlider.value))*2;
+        let lPercent = (lensSlider.value-lensSlider.min)/(lensSlider.max-lensSlider.min)
+
+        let background = {};
+        background.x = 600+camera.size;
+        background.y = camera.center.y + 60;
+
+        //camera
+        demo.rectangle(camera.x-6,camera.y+4,camera.size,camera.size*0.7,{
+            fill: 'grey'
+        });
+        demo.circle(camera.center.x,camera.center.y,20,{
+            fill: 'black',
+            hachureAngle: 40
+        })
+
+        let angleY = lPos
+
+        //Angle
+        demo.line(camera.center.x,middleY,width,middleY+angleY);
+        demo.line(camera.center.x,middleY,width,middleY-angleY);
+        let fPercent = fPos/focusSlider.max
+        fPercent = lerp(0.1,1,fPercent);//min focus distance
+        //Focal Distance
+        let fPosX = (fPercent) * (width-camera.center.x) + camera.center.x
+        fPosY = (angleY/width)*fPosX
+        let fdLine = demo.line(fPosX,middleY+fPosY,fPosX,middleY-fPosY);
+
+        //aperture
+
+        let dofPercent = (aPos/apertureSlider.max)
+        dofPercent = ecirc(dofPercent)
+        dofPercent = lerp(0.25,1,dofPercent)
+        dofPercent = (dofPercent*dofPercent) * (1-esin(lPercent))
+        //DOF
+
+        let near = (fPercent-(Math.pow(fPercent,1.5))*dofPercent) * (width-camera.center.x) + camera.center.x
+        let far = (fPercent+(Math.pow(fPercent,1.5))*dofPercent) * (width-camera.center.x) + camera.center.x
+        //adjust to focal distance
+        // near = lerp(0,near,fPercent-0.1)
+        let nearY = (angleY/width)*near
+        let farY = (angleY/width)*far
+
+        //demo.line(near,middleY+nearY,near,middleY-nearY);
+        //demo.line(far,middleY+farY,far,middleY-farY);
+
+        demo.polygon([[near, middleY+nearY], [near, middleY-nearY],  [far, middleY-farY],[far, middleY+farY]], {fill: "green"});
+       // let farDofLine = demo.line(fPos,middleY+fPosY,fPos,middleY-fPosY);
+
+
+    }
+
+    //drawHooks
+    apertureSlider.oninput = function() {
+        draw();
+        calc();
+    }
+    focusSlider.oninput = function() {
+        draw();
+        calc();
+    }
+    lensSlider.oninput = function() {
+        draw();
+        calc();
+    }
+
+    draw();
+
+    const calcText = document.getElementById("calc");
+    calc();
+
+    function lerp(a,b,t)
+    {
+        //clamp
+        t = t > 1 ? 1 : t;
+        t = t<0 ? 0 : t;
+        return b*t + a*(1-t)
+    }
+    function ecirc(x) {
+        return Math.sqrt(1 - Math.pow(x - 1, 2));
+    }
+    function esin(x) {
+        return Math.sin((x * Math.PI) / 2);
+    }
+
+    function hyper(focalLength,aperture){
+        let circle = 0.019;//circle of confusion
+        return ((Math.pow(focalLength,2))/(aperture*circle))+focalLength;
+    }
+
+    function near(distance,hyper,focalLength){
+        return (distance*(hyper-focalLength))/(hyper+distance-(2*focalLength));
+    }
+
+    function far(distance,hyper,focalLength)
+    {
+        let f = (distance*(hyper-focalLength)) / (hyper-distance);
+        return f < 0 ? Infinity : f;
+    }
+    function widthToAngle(width){
+        let x = 43.3;//Sensor size. I think we actually just want the horizontal for the top-down drawing, not the diagonal (as would be the diagonal FOV)
+        let y = x/(2*width);
+        y = y*180/Math.PI
+        console.log(y);
+        return 2*Math.atan(y);
+    }
+
+</script>
+</body>
+</html>
