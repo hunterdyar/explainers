@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Depth Of Field</title>
     <link rel="stylesheet" href="../shared/css/cutestrap.min.css">
-    <script src="/shared/js/three.js"></script>
-    <script src="/shared/js/rough/rough.js"></script>
+    <script src="../shared/js/three.js"></script>
+    <script src="../shared/js/rough/rough.js"></script>
 
     <style>
         .slidecontainer{
@@ -46,7 +46,7 @@
 <body>
 <article class="wrapper -thin">
     <h1>Depth Of Field</h1>
-    <p>controlling blurriness</p>
+    <p>Because we need that blur!</p>
     <hr />
     <h3>Three Inputs, One Output</h3>
     <p>Three properties control the depth of field.</p>
@@ -82,9 +82,9 @@
     const apertureSlider = document.getElementById("apertureInput");
     const apertureLabel = document.getElementById("apertureLabel");
     apertureSlider.max = fstops.length-1;
-    var focusSlider = document.getElementById("focusInput");
+    let focusSlider = document.getElementById("focusInput");
     const distanceLabel = document.getElementById("distanceLabel");
-    var lensSlider = document.getElementById("lensInput");
+    let lensSlider = document.getElementById("lensInput");
     const widthLabel = document.getElementById("widthLabel");
 
     let middleY = demo.canvas.height/2;
