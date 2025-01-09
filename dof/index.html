@@ -66,10 +66,14 @@
         <input type="range" min="1" max="100" value="50" class="slider" id="lensInput">
     </div>
     <hr />
+    <p>Note: The above diagram is just a visualization. It does not represent the <strong>actual depth of field</strong> that these settings would produce:</p>
     <p id="calc">test</p>
+    <p><em>Calculated values are for an average full-frame digital camera sensor.</em></p>
     <hr />
-    <p>We mostly think of the Aperture (f-stop) as the main tool to control depth of field, in many circumstances, lens width and focal distance are not adjustable without impacting the look of the final image. Aperture effects exposure, which can be compensated for without (sometimes) affecting the resulting image, so it's the most 'independent' control.
+    <p>We mostly think of the Aperture (f-stop) as the main tool to control depth of field. In many circumstances, lens width and focal distance are not adjustable without impacting the look of the final image.</p>
+    <p>Aperture (f-stop) effects exposure, which can be compensated for without (sometimes) affecting the resulting image, so it's the most 'independent' control.
     </p>
+    <p>DOF is also affected by the lenses near limit for focusing. Lenses can only focus <em>so close</em>.</p>
 </article>
 
 <script>
@@ -103,7 +107,7 @@
         let h = hyper(lPos,aPos);
         nearCalc = near(distance, h, lPos);
         farCalc = far(distance, h, lPos)
-        calcText.innerText = "Focus is "+ distance/1000 +"m. near: "+ +(nearCalc/1000).toFixed(2)+"m, far: "+ +(farCalc/1000).toFixed(2) + (farCalc !== Infinity ? "m" : "");
+        calcText.innerText = "Focus: "+ distance/1000 +"m. Near: "+ +(nearCalc/1000).toFixed(2)+"m. Far: "+ +(farCalc/1000).toFixed(2) + (farCalc !== Infinity ? "m" : "");
     }
 
     function draw()
