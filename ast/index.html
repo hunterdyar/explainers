@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AST Visualizer</title>
+
+</head>
+<body>
+<label for="sourceTextarea"></label><textarea id="sourceTextarea" rows="20" cols="100" wrap="soft">
+    digraph { a -> b }
+</textarea>
+<button id="generateButton">Generate</button>
+<hr />
+<div id="output"></div>
+</body>
+<script type="module" src="js/acorn/acorn/src/index.js" ></script>
+<script src="js/viz-standalone.js"></script>
+<script type="module" src="js/astviz.js">
+
+</script>
+</html>
