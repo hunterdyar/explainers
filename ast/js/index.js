@@ -15,9 +15,13 @@ textarea.oninput = function (x){
 
 const viz = Viz.instance();
 function UpdateGraphviz() {
-    svg_div.innerHTML = "";
     var data = textarea.value;
     var o = Convert(data);
+    if(!o){
+        return;
+    }
+    svg_div.innerHTML = "";
+
     outputGV.innerText = o;
     var svg = "";
     Viz.instance().then(function(viz) {

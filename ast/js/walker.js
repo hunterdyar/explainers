@@ -1,3 +1,4 @@
+
 let wid = 0;
 function getID(){
     wid++;
@@ -11,8 +12,9 @@ const Walks = {
     ExpressionStatement(n,s,c){
         c(n.expression,s);
         let nn = s.get(hash(n.expression));
-        nn.decs["shape"] = "rectangle";
-
+        //nn.decs["shape"] = "rectangle";
+        //we're skipping expressionStatement nodes, so it hashes to it's child.
+        s.set(hash(n),nn);
     },
     Literal(n,s,c){
         let me = new GNode(n.value);
@@ -31,8 +33,9 @@ const Walks = {
         let me = new GNode("Assign");
         s.set(hash(n),me);
         g.push(new GEdge(me.id,l.id,"left"))
+        //g.push(new GRank(l.id,l.id));
         g.push(new GEdge(me.id,r.id,"right"))
-        g.push(new GRank(l.id,r.id));
+        //g.push(new GRank(l.id,r.id));
         children[me.id] = [l.id, r.id];
     }
     ,
@@ -71,17 +74,67 @@ const Walks = {
         thenEdge.decs["ltail"] = ifCluster.id;
         g.push(thenEdge)
         let mems = getAllChildren(test.id);
-        console.log(mems);
         ifCluster.members = ifCluster.members.concat(mems);
     },
     BlockStatement(n,s,c){
-        let me = new GCluster("Block");
+        let cluster = new GCluster("Block");
+        let me = new GNode("Block");
+        children[me.id] = [];
+        cluster.members.push(me.id);
+        cluster.ignore = false;
         s.set(hash(n),me);
+
+        var childCount = 0;
         n.body.forEach((x)=>{
-            c(x,s,c);
+            childCount++;//lol starting at 1
+            c(x,s);
             let xn = s.get(hash(x));
-            me.members.push(xn.id);
+            children[me.id].push(xn.id);
+            if(xn) {
+                cluster.members.push(xn.id);
+                let sequenceEdge = new GEdge(me.id,xn.id,childCount.toString());
+                g.push(sequenceEdge);
+            }
+            let blockChildren = getAllChildren(xn.id);
+            cluster.members = cluster.members.concat(blockChildren);
         })
+        g.push(cluster)
+    },
+    ArrayExpression(n,s,c){
+        console.log("ArrayExpression not supported yet sorry");
+    },
+    CallExpression(n,s,c){
+        //c(n.callee,s);
+        //var ident = s.get(hash(n.callee));
+        var me = new GNode(n.callee.name);
+        me.decs["shape"] = "pentagon";
+        s.set(hash(n),me);
+        if(arguments.length > 0) {
+            children[me.id] = [];
+            let argCount = 0;//just used for labels
+            n.arguments.forEach((x) => {
+                c(x, s);
+                let arg = s.get(hash(x));
+                var e = new GEdge(me.id, arg.id, "argument "+argCount);
+                g.push(e);
+                children[me.id].push(arg.id);
+                argCount++;
+            })
+        }
+    },
+    UpdateExpression(n,s,c){
+        //a++ or a--;
+        c(n.argument,s);
+        let arg = s.get(hash(n.argument));
+        var me = new GNode(n.operator);
+        s.set(hash(n),me);
+        var edge = new GEdge(me.id,arg.id,"");
+        g.push(edge);
+        children[me.id] = [arg.id];
+    },
+    ConditionalExpression(n,s,c){
+        //ternery's have the same AST as conditioanls. basically.
+        this.IfStatement(n,s,c);
     }
 }
 
@@ -153,7 +206,12 @@ function Convert(source){
     g = []
     children = []
     wid = 0;
-    let ast = acorn.parse(source);
+    ast = {};
+    try {
+        ast = acorn.parse(source);
+    }catch(err) {
+        return null;
+    }
     let o = "digraph {\ncompound = true;\nsplines=ortho\n"
 
     let state = new Map();
