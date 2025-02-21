@@ -24,8 +24,6 @@ function UpdateGraphviz() {
        svg = viz.renderSVGElement(o);
        svg_div.appendChild(svg);
     });
-
-
 }
 
 

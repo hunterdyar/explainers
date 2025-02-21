@@ -12,6 +12,23 @@ const Walks = {
         let me = new GNode(n.value);
         s.set(hash(n),me);
     },
+    Identifier(n,s,c){
+        let me = new GNode(n.name);
+        me.decs["shape"] = "note";
+        s.set(hash(n),me);
+    },
+    AssignmentExpression(n,s,c){
+        c(n.left, s);
+        let l = s.get(hash(n.left));
+        c(n.right,s);
+        let r = s.get(hash(n.right));
+        let me = new GNode("Assign");
+        s.set(hash(n),me);
+        g.push(new GEdge(me.id,l.id,"left"))
+        g.push(new GEdge(me.id,r.id,"right"))
+        g.push(new GRank(l.id,r.id));
+    }
+    ,
     BinaryExpression(n,s,c) {
         c(n.left, s);
         let l = s.get(hash(n.left));
@@ -29,6 +46,7 @@ class GNode{
     id
     type
     label
+    decs = {}
     constructor(name){
         this.label = name;
         this.id = getID();
@@ -41,6 +59,7 @@ class GEdge{
     toID
     label
     type
+    decs = {}
     constructor(f,t,label){
         this.fromID = f;
         this.toID = t;
@@ -69,7 +88,11 @@ function Convert(source){
     acorn.walk.recursive(acorn.parse(source),state,Walks);
 
     state.forEach(n => {
-            o += n.id+" [label=\""+n.label+"\"]";
+        let d =";"
+        for (const [key, value] of Object.entries(n.decs)) {
+            d+=`${key}=${value}`;
+        }
+            o += n.id+" [label=\""+n.label+"\" "+d+"]\n";
     })
     for(let i = 0; i < g.length; i++){
         let n = g[i];
@@ -82,7 +105,7 @@ function Convert(source){
     }
 
     o+=" }"
-    console.log(o,state,g);
+    //console.log(o,state,g);
     return o;
 }
 //digraph {
