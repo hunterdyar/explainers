@@ -4,8 +4,6 @@ const generate_btn = document.getElementById("generateButton")
 const svg_div = document.getElementById("output");
 const textarea = document.getElementById("sourceTextarea");
 
-// let a = parse("1+1");
-// console.log(a);
 
 generate_btn.onclick = function (x){
    UpdateGraphviz();
@@ -20,9 +18,10 @@ const viz = Viz.instance();
 function UpdateGraphviz() {
     svg_div.innerHTML = "";
     var data = textarea.value;
+    var o = Convert(data);
     var svg = "";
     Viz.instance().then(function(viz) {
-       svg = viz.renderSVGElement(data);
+       svg = viz.renderSVGElement(o);
        svg_div.appendChild(svg);
     });
 

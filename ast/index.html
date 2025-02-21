@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>AST Visualizer</title>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/acorn/8.14.0/acorn.js" integrity="sha512-LmDbUhyR0zKgMllqAf67Ye09qA/UXZ87QiqvJQnKAi9bxkKu42lbiaPaWIvWP3Jj8Qs8BfZKKP6YMXDFGxdv3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/acorn-walk/8.3.4/walk.js" integrity="sha512-zK0zeqVICg1Yk8t3IHWHS+cKubowqgWddte2rRkm3z70EabVPVBhpE7XMVH34X4F2e48bOI+P0n3xhj5ReKqVg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
 <label for="sourceTextarea"></label><textarea id="sourceTextarea" rows="20" cols="100" wrap="soft">
@@ -13,9 +14,7 @@
 <hr />
 <div id="output"></div>
 </body>
-<script type="module" src="js/acorn/acorn/src/index.js" ></script>
 <script src="js/viz-standalone.js"></script>
-<script type="module" src="js/astviz.js">
-
-</script>
+<script src="js/walker.js"></script>
+<script src="js/index.js"></script>
 </html>
