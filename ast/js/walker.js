@@ -34,6 +34,7 @@ const Walks = {
     IfStatement(n,s,c){
        s.StartCluster("if")
         c(n.test, s);
+       s.AddInvisibleNode(n);
         s.AddDecsToLastNode({"shape":"diamond"});
         c(n.consequent,s);
 
@@ -81,6 +82,19 @@ const Walks = {
     },
     ConditionalExpression(n,s,c){
         this.IfStatement(n,s,c);
+    },
+    FunctionDeclaration(n,s,c){
+        s.StartCluster("FunctionDeclaration");
+        s.AddNode(n,n.id.name);
+        //block statement...
+        c(n.body,s);
+
+        s.DoneWithNode();
+        s.EndCluster();
+    },
+    VariableDeclaration(n,s,c){
+        // this.AssignmentExpression(n.declarations[0],s,c);
+        // s.AddInvisibleNode(n);
     }
 }
 

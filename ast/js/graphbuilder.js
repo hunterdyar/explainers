@@ -32,7 +32,10 @@ class GraphBuilder {
         })
         //are we in a cluster?
         if(this.clusterPeek()){
-            this.clusterPeek().members.push(me.id);
+            // for (let i=0; i < this.clusterStack.length; i++){
+            //     this.clusterStack[i].members.push(me.id);
+            // }
+           this.clusterPeek().members.push(me.id);
         }
         //are we not a root node?
         if(this.peek()){
@@ -46,6 +49,8 @@ class GraphBuilder {
         }
         this.nodeStack.push(me);
         this.s.set(this.hash(node),me);
+        this.g.push(me);
+
     }
     AddEdge(from,to,label="", decs={}){
         let edge = new GEdge(this.getID(),this.s.get(this.hash(from)).id,this.s.get(this.hash(to)).id,label);
@@ -60,6 +65,9 @@ class GraphBuilder {
     StartCluster(name){
         //marks a point for a cluster to be added.
         let c = new GCluster(this.getID(),name);
+        if(this.clusterPeek()){
+            this.clusterPeek().memberClusters.push(c);
+        }
         this.clusterStack.push(c);
         this.g.push(c);
     }
@@ -118,30 +126,15 @@ class GraphBuilder {
 
     Build(){
         let o = "digraph {\ncompound = true;\nsplines=ortho\n";
-        this.s.forEach(n => {
-            if(n.ignore){
-                return;
-            }
-            let d =""
-            for (const [key, value] of Object.entries(n.decs)) {
-                d+=`${key}=${value}`;
-            }
-            o += n.id+" [label=\""+n.label+"\" "+d+"]\n";
-        })
         for(let i = 0; i < this.g.length; i++){
             let n = this.g[i];
-            if(n.type === "edge"){
-                let d =""
-                for (const [key, value] of Object.entries(n.decs)) {
-                    d+=`${key}=${value}`;
-                }
-
-                o += n.fromID + " -> " + n.toID +" [label=\""+n.label+"\" "+d+"]";
-            }else if(n.type === "rank"){
-                o += "subgraph { rank = same; "+n.elements.join(" ")+" }";
-            }else if(n.type === "cluster"){
-                o+= "subgraph "+n.id+" { cluster = true;\n label="+n.label+";\n "+n.members.join("\n")+" }";
+            if(n.ignore){
+                continue;
             }
+            if(n.alreadyRendered){
+                continue;
+            }
+            o += n.Draw();
             o+="\n"
         }
 
@@ -182,6 +175,15 @@ class GNode{
         this.type = "node";
         this.id = id;
     }
+    Draw(){
+        let d =""
+        for (const [key, value] of Object.entries(this.decs)) {
+            d+=`${key}=${value}`;
+        }
+        let o = this.id+" [label=\""+this.label+"\" "+d+"]";
+        console.log(o);
+        return o;
+    }
 }
 class GEdge{
     id
@@ -197,6 +199,15 @@ class GEdge{
         this.id = id;
         this.type = "edge";
     }
+
+    Draw(){
+        let d =""
+        for (const [key, value] of Object.entries(this.decs)) {
+            d+=`${key}=${value}`;
+        }
+        let o = (this.fromID + " -> " + this.toID +" [label=\""+this.label+"\" "+d+"]");
+        return o
+    }
 }
 class GRank{
     type = "rank";
@@ -210,11 +221,27 @@ class GCluster {
     type
     label
     members = []
+    memberClusters = []
     decs = {}
     constructor(id, name,...members){
         this.label = name;
         this.id = id;
         this.type = "cluster";
         this.members = members;
+        this.memberClusters = [];
+    }
+
+    Draw(){
+        let o = "";
+        o+= "subgraph "+this.id+" { cluster = true;\n label="+this.label+";\n "+this.members.join("\n");
+
+        this.memberClusters.forEach(c=>{
+            o += c.Draw();
+            c.alreadyRendered = true;
+            o += '\n';
+        })
+
+        o+=" }";
+        return o;
     }
 }
