@@ -31,6 +31,14 @@ const Walks = {
         s.LabelIncomingEdge(n.right,"Right");
         s.DoneWithNode();
     },
+    LogicalExpression(n,s,c) {
+        s.AddNode(n,n.operator);
+        c(n.left, s);
+        s.LabelIncomingEdge(n.left,"Left");
+        c(n.right,s);
+        s.LabelIncomingEdge(n.right,"Right");
+        s.DoneWithNode();
+    },
     IfStatement(n,s,c){
        s.StartCluster("if")
         c(n.test, s);
@@ -74,6 +82,23 @@ const Walks = {
         }
         s.DoneWithNode();
     },
+    ObjectExpression(n,s,c){
+        s.AddNode(n, "Object Expression", {"shape":"house"});
+
+        n.properties.forEach(p=> {
+            c(p,s);
+        })
+
+        s.DoneWithNode();
+    },
+    Property(n,s,c){
+        s.AddNode(n,"Property")
+        c(n.key,s);
+        s.LabelIncomingEdge(n.key,"Key");
+        c(n.value,s);
+        s.LabelIncomingEdge(n.value,"Value");
+        s.DoneWithNode();
+    },
     UpdateExpression(n,s,c){
         //a++ or a--;
         s.AddNode(n,n.operator);
@@ -92,9 +117,78 @@ const Walks = {
         s.DoneWithNode();
         s.EndCluster();
     },
+    MemberExpression(n,s,c){
+        s.AddNode(n,"Member Access");
+        c(n.object,s);
+        s.LabelIncomingEdge(n.object,"Object");
+        c(n.property,s);
+        s.LabelIncomingEdge(n.property,"Property");
+        s.DoneWithNode()
+    },
     VariableDeclaration(n,s,c){
-        // this.AssignmentExpression(n.declarations[0],s,c);
+        if(n.declarations.length === 1){
+           c(n.declarations[0],s);
+           s.AddInvisibleNode(n);
+        }else if(n.declarations.length > 1){
+            s.AddNode(n,"Variable Declaration ("+n.kind+")");
+            n.declarations.forEach((x)=>{
+                c(x,s);
+            })
+            s.DoneWithNode();
+        }
         // s.AddInvisibleNode(n);
+    },
+    VariableDeclarator(n,s,c){
+        s.AddNode(n,"Declare "+n.id.name);
+        if(n.init) {
+            c(n.init, s);
+            s.LabelIncomingEdge(n.init,"initial value");
+        }
+        s.DoneWithNode();
+    },
+    ReturnStatement(n,s,c){
+      s.AddNode(n,"Return");
+      if(n.argument){
+          c(n.argument,s);
+      }
+      s.DoneWithNode();
+    },
+    WhileStatement(n,s,c){
+        s.StartCluster("while")
+        c(n.test, s);
+        s.AddInvisibleNode(n);
+        s.AddDecsToLastNode({"shape":"diamond"});
+        c(n.body,s);
+        s.AddEdge(n.test,n.body,"repeat");//
+        s.AddEdge(n.body,n.test,"do");//
+
+        s.EndCluster();
+    },
+    ForStatement(n,s,c){
+        //todo: this one is tricky
+    },
+    ArrowFunctionExpression(n,s,c){
+        //todo: low priority
+    },
+    ThrowStatement(n,s,c){
+        s.AddNode(n,"Throw");
+        c(n.argument,s);
+        s.DoneWithNode();
+    },
+    NewExpression(n,s,c){
+        s.AddNode(n,"new");
+        s.AddNode(n.callee,n.callee.name,{"shape":"house"});
+
+        if(arguments.length > 0) {
+            let argCount = 0;//just used for labels
+            n.arguments.forEach((x) => {
+                c(x, s);
+                s.LabelIncomingEdge(x,"argument "+argCount.toString());
+                argCount++;
+            })
+        }
+        s.DoneWithNode();
+        s.DoneWithNode();
     }
 }
 

@@ -181,7 +181,7 @@ class GNode{
             d+=`${key}=${value}`;
         }
         let o = this.id+" [label=\""+this.label+"\" "+d+"]";
-        console.log(o);
+        //console.log(o);
         return o;
     }
 }
