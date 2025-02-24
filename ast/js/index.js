@@ -1,16 +1,28 @@
 // import {parse} from "./acorn/acorn/src/index";
 
+//inputs
 const generate_btn = document.getElementById("generateButton")
+const genWhileTypingCheckbox = document.getElementById("genWhileTyping")
+const showGraphViz = document.getElementById("showGraphViz")
+
+//other stuff
 const svg_div = document.getElementById("output");
 const textarea = document.getElementById("sourceTextarea");
 const outputGV = document.getElementById("outputGV");
+
 
 generate_btn.onclick = function (x){
    UpdateGraphviz();
 };
 
 textarea.oninput = function (x){
-     UpdateGraphviz();
+    if(genWhileTypingCheckbox.checked) {
+        UpdateGraphviz();
+    }
+}
+
+showGraphViz.onclick = function (x){
+    UpdateGraphviz();
 }
 
 const viz = Viz.instance();
@@ -22,7 +34,11 @@ function UpdateGraphviz() {
     }
     svg_div.innerHTML = "";
 
-    outputGV.innerText = o;
+    if(showGraphViz.checked) {
+        outputGV.innerText = o;
+    }else{
+        outputGV.innerText = "";
+    }
     var svg = "";
     Viz.instance().then(function(viz) {
 
