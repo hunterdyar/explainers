@@ -1,6 +1,6 @@
 .ast-visualizer{
     grid-template-columns: 100%;
-    grid-template-rows: 4em 100%;
+    grid-template-rows: 100%;
 }
 
 .config{
@@ -11,13 +11,13 @@
 .textentry{
     grid-column-start: 1;
     grid-column-end: 1;
-    grid-row-start: 2;
+    grid-row-start: 1;
     padding-bottom: 2em;
 }
 .output{
     grid-column-start: 1;
     grid-column-end: 1;
-    grid-row-start: 3;
+    grid-row-start: 2;
 }
 
 .ast-visualizer{
