@@ -40,10 +40,11 @@ const Walks = {
         s.DoneWithNode();
     },
     IfStatement(n,s,c){
-       s.StartCluster("if")
+        s.AddNode(n,"If");
         c(n.test, s);
-       s.AddInvisibleNode(n);
         s.AddDecsToLastNode({"shape":"diamond"});
+        s.DoneWithNode();
+
         c(n.consequent,s);
 
         s.AddEdge(n.test,n.consequent,"then",{"ltail":s.ClusterID()});//
@@ -51,10 +52,8 @@ const Walks = {
             c(n.alternate, s);
             s.AddEdge(n.test,n.alternate,"else",{"ltail":s.ClusterID()});//
         }
-        s.EndCluster();
     },
     BlockStatement(n,s,c){
-        s.StartCluster("Block");
         s.AddNode(n,"Block");
         var childCount = 0;
         n.body.forEach((x)=>{
@@ -63,13 +62,12 @@ const Walks = {
             s.LabelIncomingEdge(x,childCount.toString());
         })
         s.DoneWithNode();
-        s.EndCluster();
     },
     ArrayExpression(n,s,c){
         console.log("ArrayExpression not supported yet sorry");
     },
     CallExpression(n,s,c){
-        s.AddNode(n.callee,n.callee.name,{"shape":"pentagon"});
+        s.AddNode(n.callee,n.callee.name,{"shape":"pentagon","style":"filled","fillcolor":"beige"});
         s.AddInvisibleNode(n);
 
         if(arguments.length > 0) {
@@ -109,13 +107,15 @@ const Walks = {
         this.IfStatement(n,s,c);
     },
     FunctionDeclaration(n,s,c){
-        s.StartCluster("FunctionDeclaration");
-        s.AddNode(n,n.id.name);
+        s.StartFunctionDec(n.id.name);
+        // c(n.id,s);
+        // s.AddInvisibleNode(n);
+        // s.DoneWithNode();
         //block statement...
-        c(n.body,s);
 
+        c(n.body,s);
         s.DoneWithNode();
-        s.EndCluster();
+         s.EndFunctionDec();
     },
     MemberExpression(n,s,c){
         s.AddNode(n,"Member Access");

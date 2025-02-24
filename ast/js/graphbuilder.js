@@ -11,6 +11,7 @@ class GraphBuilder {
     clusterStack = [];
     lastPopped;
     lastCluster;
+    isProgram = false;
     constructor() {
         this.wid = 0;
     }
@@ -31,10 +32,12 @@ class GraphBuilder {
             me.decs[kv[0]] = kv[1];
         })
         //are we in a cluster?
+        me.isProgram = true;
         if(this.clusterPeek()){
             // for (let i=0; i < this.clusterStack.length; i++){
             //     this.clusterStack[i].members.push(me.id);
             // }
+            me.isProgram = !this.clusterPeek().isFunctionDec;
            this.clusterPeek().members.push(me.id);
         }
         //are we not a root node?
@@ -75,6 +78,14 @@ class GraphBuilder {
         //makes a point for a cluster to be removed.
         this.lastCluster = this.clusterStack.pop();
     }
+    StartFunctionDec(name){
+       this.StartCluster(name);
+       this.clusterPeek().isFunctionDec = true;
+    }
+    EndFunctionDec(){
+        this.EndCluster();
+    }
+
     AddDecorator(key,value){
         //sets dec[key]=value on top node.
     }
@@ -125,7 +136,11 @@ class GraphBuilder {
     }
 
     Build(){
-        let o = "digraph {\ncompound = true;\nsplines=ortho\n";
+        let o = "digraph {compound = true;\nnode [style=filled;fillcolor=white];\n";
+
+        let fdecs = []
+        let programIDs = [];
+        let rootclusters = [];
         for(let i = 0; i < this.g.length; i++){
             let n = this.g[i];
             if(n.ignore){
@@ -134,8 +149,40 @@ class GraphBuilder {
             if(n.alreadyRendered){
                 continue;
             }
+            if(n.isFunctionDec){
+                fdecs.push(n);
+                continue;
+            }
+            if(n.isProgram === true) {
+                programIDs.push(n.id);
+            }
+            if(n.type === "cluster"){
+                programIDs.push(n.id);
+                rootclusters.push(n);
+                continue;
+            }
             o += n.Draw();
             o+="\n"
+        }
+
+
+        o+= "\nsubgraph ___program___{\n";
+        o+= "cluster=true;label = \"Program\";style=\"filled\"fillcolor=\"aliceblue\"\n";
+            o+= programIDs.join("\n");
+            o+="\n";
+            for(let i = 0; i < rootclusters.length; i++){
+                o+= rootclusters[i].Draw()+"\n";
+            }
+        o+="}\n"
+
+        if(fdecs.length > 0) {
+            //Wrapper for Function Declaration Area
+            o+= "\nsubgraph ___fundecs___{ cluster=true;label = \"Function Declarations\";style=\"filled\"fillcolor=\"beige\"\n";
+            //Now, the function decs at the end.
+            for (let i = 0; i < fdecs.length; i++) {
+                o += fdecs[i].Draw();
+            }
+            o+="}"
         }
 
         o+=" }"
@@ -178,7 +225,7 @@ class GNode{
     Draw(){
         let d =""
         for (const [key, value] of Object.entries(this.decs)) {
-            d+=`${key}=${value}`;
+            d+=`${key}=${value}`+";";
         }
         let o = this.id+" [label=\""+this.label+"\" "+d+"]";
         //console.log(o);
@@ -216,6 +263,7 @@ class GRank{
         this.elements = args;
     }
 }
+
 class GCluster {
     id
     type
@@ -223,6 +271,7 @@ class GCluster {
     members = []
     memberClusters = []
     decs = {}
+    isFunctionDec = false;
     constructor(id, name,...members){
         this.label = name;
         this.id = id;
@@ -233,7 +282,7 @@ class GCluster {
 
     Draw(){
         let o = "";
-        o+= "subgraph "+this.id+" { cluster = true;\n label="+this.label+";\n "+this.members.join("\n");
+        o+= "subgraph "+this.id+" { cluster = true;\n label="+this.label+";style=\"filled\";fillcolor=\"white\";\n "+this.members.join("\n");
 
         this.memberClusters.forEach(c=>{
             o += c.Draw();
