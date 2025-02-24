@@ -1,6 +1,8 @@
 .ast-visualizer{
     grid-template-columns: 100%;
     grid-template-rows: 100%;
+    padding-top: 10px;
+
 }
 
 .config{
@@ -8,7 +10,7 @@
     grid-column-end: span 1;
 }
 
-.textentry{
+.text-entry{
     grid-column-start: 1;
     grid-column-end: 1;
     grid-row-start: 1;
@@ -23,7 +25,7 @@
 .ast-visualizer{
     display: grid;
 }
-.textentry{
+.text-entry{
     padding-right: 10px;
 }
 .output{
@@ -40,7 +42,7 @@
 @media screen and (min-width: 38rem) {
     .ast-visualizer{
         grid-template-columns: 30% 70%;
-        grid-template-rows: 2em 100%;
+        grid-template-rows: 100%;
     }
 
     .config{
@@ -48,16 +50,16 @@
         grid-column-end: span 2;
     }
 
-    .textentry{
+    .text-entry{
         grid-column-start: 1;
         grid-column-end: 1;
-        grid-row-start: 2;
+        grid-row-start: 1;
         padding-right: 10px;
     }
     .output{
         grid-column-start: 2;
         grid-column-end: 2;
-        grid-row-start: 2;
+        grid-row-start: 1;
     }
 }
 
