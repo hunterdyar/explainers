@@ -92,10 +92,17 @@ class GraphBuilder {
     AddInvisibleNode(node){
         if(this.lastPopped){
             this.s.set(this.hash(node),this.lastPopped)
+        }else{
+            console.log("root invisible node?");
+            this.s.set(this.hash(node),{});//uh oh
         }
     }
     LabelIncomingEdge(node, label, decs={}){
-        let nodeID = this.s.get(this.hash(node)).id;
+        let gn = this.s.get(this.hash(node));
+        if(!gn){
+            console.log("Node isn't a GraphNode or InvisibleNode",node);
+        }
+        let nodeID = gn.id;
         let edge = this.g.findLast(x=>{
             return x.type === "edge" && x.toID === nodeID;
         })
@@ -112,10 +119,14 @@ class GraphBuilder {
     }
     AddDecsToLastNode(decs){
         if(this.lastPopped){
-            Object.entries(decs).forEach((kv) => {
-                this.lastPopped.decs[kv[0]] = kv[1];
-            })
+           this.AddDecsToNode(this.lastPopped,decs);
         }
+    }
+    AddDecsToNode(node,decs){
+        Object.entries(decs).forEach((kv) => {
+            let n = this.s.get(this.hash(node));
+            n.decs[kv[0]] = kv[1];
+        })
     }
     peek(){
         return this.nodeStack.at(-1);

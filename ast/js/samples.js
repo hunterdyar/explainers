@@ -10,12 +10,26 @@ const sample_fib = "//Fibonacci\n\n" +
     "  }\n" +
     "\n" +
     "  return b;\n" +
-    "}"
+    "}\n\n\n" +
+    "fibonacci(10);"
 
 const sample_math = "//Order of Operations\n\n(1+1)+1+2*3/4"
 
+const foobar = "//Function Declarations\n\n" +
+    "function foo(){\n" +
+    " return \"hello\";\n" +
+    "}\n" +
+    "\n" +
+    "function bar(){\n" +
+    " return \"world\";\n" +
+    "}\n" +
+    "\n" +
+    "let message = foo()+\",\"+bar();;\n" +
+    "\n" +
+    "console.log(message);"
 
 const samplesLookup = {
     "fib":sample_fib,
-    "pemdas":sample_math
+    "pemdas":sample_math,
+    "foobar":foobar
 };

@@ -67,18 +67,36 @@ const Walks = {
         console.log("ArrayExpression not supported yet sorry");
     },
     CallExpression(n,s,c){
-        s.AddNode(n.callee,n.callee.name,{"shape":"pentagon","style":"filled","fillcolor":"beige"});
-        s.AddInvisibleNode(n);
+        if(n.callee.type ==="MemberExpression"){
+            s.AddNode(n,"Function Call ("+n.callee.property.name+")", {"shape": "pentagon", "style": "filled", "fillcolor": "beige"});
+            c(n.callee, s);
+            s.LabelIncomingEdge(n.callee,"callee");
 
-        if(arguments.length > 0) {
-            let argCount = 0;//just used for labels
-            n.arguments.forEach((x) => {
-                c(x, s);
-                s.LabelIncomingEdge(x,"argument "+argCount.toString());
-                argCount++;
-            })
+
+            if (arguments.length > 0) {
+                let argCount = 0;//just used for labels
+                n.arguments.forEach((x) => {
+                    c(x, s);
+                    s.LabelIncomingEdge(x, "argument " + argCount.toString());
+                    argCount++;
+                })
+            }
+            s.DoneWithNode();
+        }else {//Call on a Literal
+            s.AddNode(n.callee, n.callee.name, {"shape": "pentagon", "style": "filled", "fillcolor": "beige"});
+            s.AddInvisibleNode(n);
+
+            if (arguments.length > 0) {
+                let argCount = 0;//just used for labels
+                n.arguments.forEach((x) => {
+                    console.log("arg-"+argCount,x);
+                    c(x, s);
+                    s.LabelIncomingEdge(x, "argument " + argCount.toString());
+                    argCount++;
+                })
+            }
+            s.DoneWithNode();
         }
-        s.DoneWithNode();
     },
     ObjectExpression(n,s,c){
         s.AddNode(n, "Object Expression", {"shape":"house"});
@@ -118,11 +136,11 @@ const Walks = {
          s.EndFunctionDec();
     },
     MemberExpression(n,s,c){
-        s.AddNode(n,"Member Access");
-        c(n.object,s);
-        s.LabelIncomingEdge(n.object,"Object");
+        s.AddNode(n,"Dot Access");
         c(n.property,s);
         s.LabelIncomingEdge(n.property,"Property");
+        c(n.object,s);
+        s.LabelIncomingEdge(n.object,"Of");
         s.DoneWithNode()
     },
     VariableDeclaration(n,s,c){
