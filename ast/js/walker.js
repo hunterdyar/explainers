@@ -154,15 +154,14 @@ const Walks = {
       s.DoneWithNode();
     },
     WhileStatement(n,s,c){
-        s.StartCluster("while")
+        s.AddNode(n,"While")
         c(n.test, s);
-        s.AddInvisibleNode(n);
         s.AddDecsToLastNode({"shape":"diamond"});
+        s.LabelIncomingEdge(n.test,"test")
         c(n.body,s);
-        s.AddEdge(n.test,n.body,"repeat");//
-        s.AddEdge(n.body,n.test,"do");//
-
-        s.EndCluster();
+        s.LabelIncomingEdge(n.body,"do")
+        s.AddEdge(n.body,n,"repeat");
+        s.DoneWithNode();
     },
     ForStatement(n,s,c){
         //todo: this one is tricky

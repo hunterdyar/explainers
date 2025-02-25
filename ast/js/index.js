@@ -4,7 +4,7 @@
 const generate_btn = document.getElementById("generateButton")
 const genWhileTypingCheckbox = document.getElementById("genWhileTyping")
 const showGraphViz = document.getElementById("showGraphViz")
-
+const samplesDrop = document.getElementById("samples")
 //other stuff
 const svg_div = document.getElementById("output");
 const textarea = document.getElementById("sourceTextarea");
@@ -19,6 +19,10 @@ textarea.oninput = function (x){
     if(genWhileTypingCheckbox.checked) {
         UpdateGraphviz();
     }
+}
+
+samplesDrop.onchange = function (x){
+    LoadSample(samplesDrop.value);
 }
 
 showGraphViz.onclick = function (x){
@@ -45,6 +49,15 @@ function UpdateGraphviz() {
        svg = viz.renderSVGElement(o);
        svg_div.appendChild(svg);
     });
+}
+
+function LoadSample(sample){
+    samp = samplesLookup[sample];
+    if(samp){
+        textarea.value = samp;
+        UpdateGraphviz();
+    }
+    samplesDrop.value = "samples";
 }
 
 UpdateGraphviz();
