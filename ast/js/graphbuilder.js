@@ -93,7 +93,7 @@ class GraphBuilder {
         if(this.lastPopped){
             this.s.set(this.hash(node),this.lastPopped)
         }else{
-            console.log("root invisible node?");
+           // console.log("root invisible node?");
             this.s.set(this.hash(node),{});//uh oh
         }
     }
@@ -117,11 +117,6 @@ class GraphBuilder {
             console.log("can't label incoming edge",node,label);
         }
     }
-    AddDecsToLastNode(decs){
-        if(this.lastPopped){
-           this.AddDecsToNode(this.lastPopped,decs);
-        }
-    }
     AddDecsToNode(node,decs){
         Object.entries(decs).forEach((kv) => {
             let n = this.s.get(this.hash(node));
@@ -138,7 +133,7 @@ class GraphBuilder {
         if(this.clusterPeek()){
             return this.clusterPeek().id;
         }else{
-            console.log("no cluster for cluster ID")
+            //console.log("no cluster for cluster ID")
             return undefined;
         }
     }

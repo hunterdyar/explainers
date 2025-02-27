@@ -44,7 +44,27 @@
 </article>
 
 <article class="footer">
-    by <a href="http://hdyar.com" target="_blank">Hunter Dyar</a>
+
+    <details>
+        <summary>About</summary>
+        <h4>What?</h4>
+        <p>This tool creates a visual representation of <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree" target="_blank">Abstract Syntax Trees</a>. The tree structure is a helpful way to think about programming languages, and how a computer is interpreting what has been typed.</p>
+        <p>That's because almost all programming languages use a tree-structure internally to represent the program at some point while compiling or running the code.</p>
+        <p>The diagrams here are abbreviated and not the "real" AST, as this is just intended to be a visual aid.</p>
+        <p>This uses JavaScript. Not all of of JavaScript is supported. Lambdas, ArrowFuncs, List Objects, and plenty more I haven't gotten around to yet.</p>
+        <h4>Why?</h4>
+        <p>This project was created for use in my classroom. I use it as a visual aid while lecturing and explaining on top of the students poking around and experimenting.</p>
+        <p>I wanted a way to explain the concepts of AST's without explaining what AST's are used for -- I'm not teaching parsing or compiling, just how syntax works. My audience is introductory programming students. This tool generates the sorts of loose diagrams I found myself drawing on a whiteboard during lectures, something closer to a sketch than an accurate diagram - but also very much real and reactive to what is being typed.</p>
+        <p>This is not meant to represent the *actual* AST that the compiler is using. I found that showing students something like <a href="http://astexplorer.net" target="_blank">astexplorer.net</a> is a lot of noise to filter through.</p>
+        <p>What I actually care about is making the connection between syntax and a tree-structure, not dissimilar to how my elementary school math teacher drew nested boxes when explaining the order of operations.</p>
+        <h4>How?</h4>
+        <p>This project uses the <a href="https://github.com/acornjs/acorn" target="_blank">acorn</a> JS parsing library to get the "actual" AST.</p>
+        <p>It then walks that tree and generates <a href="https://graphviz.org/" target="_blank">GraphViz</a> source. It's rendered by the <a href="https://github.com/mdaines/viz-js">Viz-js</a> package.</p>
+        <p>Both acorn and viz-js run in locally as pure js and a WASM module+js wrapper, respectively. The execution happens in your browser, and no data is transmitted to any server. The only outside network connections this page should make is downloading acorn from a cdn.</p>
+    </details>
+
+    by <a href="http://hdyar.com" target="_blank">Hunter Dyar</a>.
+    <a href="https://github.com/hunterdyar/explainers/" target="_blank">Source</a>.
 </article>
 
 <div ><p id="outputGV"></p></div>

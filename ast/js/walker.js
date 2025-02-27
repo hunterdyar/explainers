@@ -89,7 +89,6 @@ const Walks = {
             if (arguments.length > 0) {
                 let argCount = 0;//just used for labels
                 n.arguments.forEach((x) => {
-                    console.log("arg-"+argCount,x);
                     c(x, s);
                     s.LabelIncomingEdge(x, "argument " + argCount.toString());
                     argCount++;
@@ -174,7 +173,7 @@ const Walks = {
     WhileStatement(n,s,c){
         s.AddNode(n,"While")
         c(n.test, s);
-        s.AddDecsToLastNode({"shape":"diamond"});
+        s.AddDecsToNode(n.test,{"shape":"diamond"});
         s.LabelIncomingEdge(n.test,"test")
         c(n.body,s);
         s.LabelIncomingEdge(n.body,"do")
