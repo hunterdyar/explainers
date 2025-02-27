@@ -42,7 +42,7 @@ const Walks = {
     IfStatement(n,s,c){
         s.AddNode(n,"If");
         c(n.test, s);
-        s.AddDecsToLastNode({"shape":"diamond"});
+        s.AddDecsToNode(n.test,{"shape":"diamond"});
         s.DoneWithNode();
 
         c(n.consequent,s);
