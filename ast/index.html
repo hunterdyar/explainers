@@ -3,71 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <title>AST Visualizer</title>
+    <link rel="stylesheet" href="https://unpkg.com/98.css">
     <link rel="stylesheet" href="./aststyle.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/acorn/8.14.0/acorn.js" integrity="sha512-LmDbUhyR0zKgMllqAf67Ye09qA/UXZ87QiqvJQnKAi9bxkKu42lbiaPaWIvWP3Jj8Qs8BfZKKP6YMXDFGxdv3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/acorn-walk/8.3.4/walk.js" integrity="sha512-zK0zeqVICg1Yk8t3IHWHS+cKubowqgWddte2rRkm3z70EabVPVBhpE7XMVH34X4F2e48bOI+P0n3xhj5ReKqVg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="js/graphbuilder.js" ></script>
-    <script src="js/samples.js" ></script>
+    <script src="js/graphbuilder.js"></script>
+    <script src="js/samples.js"></script>
 </head>
-<body>
-<article class="header">
-    <div class="config">
-        <h2>Hunter's AST Visualizer.</h2>
-        <button id="generateButton">Generate</button>
+<body class="mainWindow">
+
+<article class="header window">
+    <div class="title-bar">
+        <div class="title-bar-text">Hunter's AST Visualizer</div>
+        <div class="title-bar-controls">
+            <button aria-label="Close"></button>
+        </div>
+    </div>
+    <div class="config window-body">
         <label for="samples" style="display:none">Samples</label>
-        <select name="samples" id="samples">
+        <select name="samples" id="samples" class="dropdown">
             <option value="samples">Samples...</option>
             <option value="pemdas">pemdas</option>
             <option value="fib">Fibonacci</option>
             <option value="foobar">Function Declarations</option>
         </select>
-        <label>
-            Generate While Typing
-            <input id="genWhileTyping" type="checkbox" checked/>
-        </label>
+        
+        <div class="field-row">
+            <input id="genWhileTyping" type="checkbox" checked />
+            <label for="genWhileTyping">Generate While Typing</label>
+        </div>
 
-        <label>
-            Show GraphViz
-            <input id="showGraphViz" type="checkbox"  />
-        </label>
+        <div class="field-row">
+            
+            <input id="showGraphViz" type="checkbox" />
+            <label for="showGraphViz">Show GraphViz</label>
+        </div>
+
+        <button id="generateButton" class="button">Generate</button>
+
     </div>
 </article>
-<article class="ast-visualizer">
-    <div class="text-entry">
+
+<article class="ast-visualizer window">
+    <div class="text-entry window-body">
         <label for="sourceTextarea"></label>
-        <textarea id="sourceTextarea" rows="20"  wrap="soft">1+2*3</textarea>
+        <textarea id="sourceTextarea" rows="20" wrap="soft" class="field">1+2*3</textarea>
+    </div>
+    <div class="output window-body">
+        <div id="output" class="output"></div>
+        <div class="window"><p id="outputGV"></p></div>
+
     </div>
 
-    <div class="output">
-        <div id="output" class="output"></div>
-    </div>
+
 </article>
 
-<article class="footer">
-
-    <details>
+<article class="footer window">
+    <details class="window-body">
         <summary>About</summary>
         <h4>What?</h4>
         <p>This tool creates a visual representation of <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree" target="_blank">Abstract Syntax Trees</a>. The tree structure is a helpful way to think about programming languages, and how a computer is interpreting what has been typed.</p>
         <p>That's because almost all programming languages use a tree-structure internally to represent the program at some point while compiling or running the code.</p>
         <p>The diagrams here are abbreviated and not the "real" AST, as this is just intended to be a visual aid.</p>
-        <p>This uses JavaScript. Not all of of JavaScript is supported. Lambdas, ArrowFuncs, List Objects, and plenty more I haven't gotten around to yet.</p>
+        <p>This uses JavaScript. Not all of JavaScript is supported. Lambdas, ArrowFuncs, List Objects, and plenty more I haven't gotten around to yet.</p>
+
         <h4>Why?</h4>
-        <p>This project was created for use in my classroom. I use it as a visual aid while lecturing and explaining on top of the students poking around and experimenting.</p>
-        <p>I wanted a way to explain the concepts of AST's without explaining what AST's are used for -- I'm not teaching parsing or compiling, just how syntax works. My audience is introductory programming students. This tool generates the sorts of loose diagrams I found myself drawing on a whiteboard during lectures, something closer to a sketch than an accurate diagram - but also very much real and reactive to what is being typed.</p>
+        <p>This project was created for use in my classroom. I use it as a visual aid while lecturing and explaining, on top of the students poking around and experimenting.</p>
+        <p>I wanted a way to explain the concepts of ASTs without explaining what ASTs are used for—I'm not teaching parsing or compiling, just how syntax works. My audience is introductory programming students. This tool generates the sorts of loose diagrams I found myself drawing on a whiteboard during lectures, something closer to a sketch than an accurate diagram—but also very much real and reactive to what is being typed.</p>
         <p>This is not meant to represent the *actual* AST that the compiler is using. I found that showing students something like <a href="http://astexplorer.net" target="_blank">astexplorer.net</a> is a lot of noise to filter through.</p>
         <p>What I actually care about is making the connection between syntax and a tree-structure, not dissimilar to how my elementary school math teacher drew nested boxes when explaining the order of operations.</p>
         <h4>How?</h4>
         <p>This project uses the <a href="https://github.com/acornjs/acorn" target="_blank">acorn</a> JS parsing library to get the "actual" AST.</p>
         <p>It then walks that tree and generates <a href="https://graphviz.org/" target="_blank">GraphViz</a> source. It's rendered by the <a href="https://github.com/mdaines/viz-js">Viz-js</a> package.</p>
-        <p>Both acorn and viz-js run in locally as pure js and a WASM module+js wrapper, respectively. The execution happens in your browser, and no data is transmitted to any server. The only outside network connections this page should make is downloading acorn from a cdn.</p>
+        <p>Both acorn and viz-js run locally as pure JS and a WASM module + JS wrapper, respectively. The execution happens in your browser, and no data is transmitted to any server. The only outside network connections this page should make are downloading acorn from a CDN.</p>
     </details>
 
-    by <a href="http://hdyar.com" target="_blank">Hunter Dyar</a>.
-    <a href="https://github.com/hunterdyar/explainers/" target="_blank">Source</a>.
+    <p>by <a href="http://hdyar.com" target="_blank">Hunter Dyar</a>.</p>
+    <p><a href="https://github.com/hunterdyar/explainers/" target="_blank">Source</a>.</p>
 </article>
 
-<div ><p id="outputGV"></p></div>
 </body>
 <script src="js/viz-standalone.js"></script>
 <script src="js/walker.js"></script>
